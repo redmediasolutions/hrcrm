@@ -1,64 +1,106 @@
 import 'package:flutter/material.dart';
+import 'package:red_hrcrm/component/employeeinfo.dart';
+import '../services/api_service.dart';
 
-class EmployeeTable extends StatelessWidget {
+
+class EmployeeTable extends StatefulWidget {
   const EmployeeTable({super.key});
 
-  static const List<_EmployeeRowData> _dummyRows = [
-    _EmployeeRowData(
-      name: 'Alex Rivera',
-      empId: 'Emp #ID-4029',
-      department: 'Design',
-      role: 'Senior Product Designer',
-      status: 'Active',
-      statusColor: Color(0xFF0BB39C),
-      contact: 'alex.r@workspace.com',
-    ),
-    _EmployeeRowData(
-      name: 'Sarah Jenkins',
-      empId: 'Emp #ID-5110',
-      department: 'Engineering',
-      role: 'Lead Dev-Ops',
-      status: 'On Leave',
-      statusColor: Color(0xFFFFA552),
-      contact: 's.jenkins@workspace.com',
-    ),
-    _EmployeeRowData(
-      name: 'David Wu',
-      empId: 'Emp #ID-2098',
-      department: 'Operations',
-      role: 'Head of Growth',
-      status: 'Active',
-      statusColor: Color(0xFF0BB39C),
-      contact: 'd.wu@workspace.com',
-    ),
-    _EmployeeRowData(
-      name: 'Elena Kovic',
-      empId: 'Emp #ID-3312',
-      department: 'Marketing',
-      role: 'Social Lead',
-      status: 'Active',
-      statusColor: Color(0xFF0BB39C),
-      contact: 'e.kovic@workspace.com',
-    ),
-  ];
+  @override
+  State<EmployeeTable> createState() => _EmployeeTableState();
+}
+
+class _EmployeeTableState extends State<EmployeeTable> {
+  List<dynamic> employees = [];
+  bool loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchEmployees();
+  }
+
+  Future<void> fetchEmployees() async {
+    try {
+      final data = await ApiService.getEmployees(); // ✅ FIXED
+      setState(() {
+        employees = data;
+        loading = false;
+      });
+    }catch (e) {
+  print("Error: $e");
+  setState(() {
+    loading = false; 
+  });
+}
+  }
+
+  Future<void> deleteEmployee(int id) async {
+    await ApiService.deleteEmployee(id);
+    fetchEmployees();
+  }
+
+  void openCreatePage() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const CreateEmployeeFullPage()),
+    );
+
+    fetchEmployees(); // 🔥 auto refresh after create
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE5E7EB)),
-      ),
-      child: Column(
-        children: [
-          const _EmployeeTableHeader(),
-          ..._dummyRows.map((row) => _EmployeeTableRow(data: row)),
-        ],
-      ),
+    if (loading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return Column(
+      children: [
+        /// 🔥 ADD BUTTON
+        Align(
+          alignment: Alignment.centerRight,
+          child: ElevatedButton(
+            onPressed: openCreatePage,
+            child: const Text("Add Employee"),
+          ),
+        ),
+
+        const SizedBox(height: 10),
+
+        /// TABLE
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: const Color(0xFFE5E7EB)),
+          ),
+          child: Column(
+            children: [
+              const _EmployeeTableHeader(),
+
+              ...employees.map((e) {
+                return _EmployeeTableRow(
+                  data: _EmployeeRowData(
+                    id: e['id'],
+                    name: e['full_name'] ?? '',
+                    empId: "EMP-${e['id']}",
+
+                    status: 'Active',
+                    statusColor: Colors.green,
+                    contact: e['email'] ?? '',
+                  ),
+                  onDelete: deleteEmployee,
+                );
+              }).toList(),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
+/* ================= HEADER ================= */
 
 class _EmployeeTableHeader extends StatelessWidget {
   const _EmployeeTableHeader();
@@ -115,10 +157,16 @@ class _HeaderCell extends StatelessWidget {
   }
 }
 
+/* ================= ROW ================= */
+
 class _EmployeeTableRow extends StatelessWidget {
-  const _EmployeeTableRow({required this.data});
+  const _EmployeeTableRow({
+    required this.data,
+    required this.onDelete,
+  });
 
   final _EmployeeRowData data;
+  final Function(int) onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -174,26 +222,26 @@ class _EmployeeTableRow extends StatelessWidget {
                   color: const Color(0xFFE6F4F1),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: Text(
-                  data.department,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: const Color(0xFF4B6E6E),
-                        fontWeight: FontWeight.w600,
-                      ),
-                ),
+                // child: Text(
+                //   data.department,
+                //   style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                //         color: const Color(0xFF4B6E6E),
+                //         fontWeight: FontWeight.w600,
+                //       ),
+                // ),
               ),
             ),
           ),
-          Expanded(
-            flex: 3,
-            child: Text(
-              data.role,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: const Color(0xFF111827),
-                    fontWeight: FontWeight.w600,
-                  ),
-            ),
-          ),
+          // Expanded(
+          //   flex: 3,
+          //   child: Text(
+          //     data.role,
+          //     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+          //           color: const Color(0xFF111827),
+          //           fontWeight: FontWeight.w600,
+          //         ),
+          //   ),
+          // ),
           Expanded(
             flex: 2,
             child: Row(
@@ -219,11 +267,14 @@ class _EmployeeTableRow extends StatelessWidget {
                   ),
             ),
           ),
-          const Expanded(
+          Expanded(
             flex: 1,
             child: Align(
               alignment: Alignment.centerRight,
-              child: Icon(Icons.more_vert, color: Color(0xFF6B7280)),
+              child: IconButton(
+                icon: const Icon(Icons.delete, color: Colors.red),
+                onPressed: () => onDelete(data.id),
+              ),
             ),
           ),
         ],
@@ -232,20 +283,22 @@ class _EmployeeTableRow extends StatelessWidget {
   }
 }
 
+/* ================= MODEL ================= */
+
 class _EmployeeRowData {
+  final int id;
   final String name;
   final String empId;
-  final String department;
-  final String role;
+
   final String status;
   final Color statusColor;
   final String contact;
 
   const _EmployeeRowData({
+    required this.id,
     required this.name,
     required this.empId,
-    required this.department,
-    required this.role,
+
     required this.status,
     required this.statusColor,
     required this.contact,

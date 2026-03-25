@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 import 'package:red_hrcrm/auth/login.dart';
+import 'package:red_hrcrm/component/employeeinfo.dart';
 import 'package:red_hrcrm/employee_form.dart';
 import 'package:red_hrcrm/homepage.dart';
 import 'package:red_hrcrm/shell.dart';
@@ -46,8 +47,8 @@ final GoRouter appRouter = GoRouter(
            builder: (context, state) => Homepage(),
         ),
          GoRoute(
-      path: '/employeeForm',
-      builder: (context, state) => const EmployeeForm(),
+      path: '/CreateEmployeePage',
+      builder: (context, state) => const CreateEmployeeFullPage(),
     ),
 
        
