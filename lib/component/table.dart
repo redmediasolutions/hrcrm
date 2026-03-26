@@ -164,7 +164,7 @@ class _EmployeeTableState extends State<EmployeeTable> {
                     );
                   },
                 );
-              }).toList(),
+              }),
             ],
           ),
         ),
