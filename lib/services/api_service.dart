@@ -80,6 +80,27 @@ static Future<Map<String, dynamic>> createFullEmployee(
     }
   }
 
+
+
+
+//employee details
+
+static Future<Map<String, dynamic>> getEmployeeById(int id) async {
+  final token = await _getToken();
+
+  final res = await http.get(
+    Uri.parse("$baseUrl/api/employees/$id"),
+    headers: {
+      "Authorization": "Bearer $token",
+    },
+  );
+
+  if (res.statusCode != 200) {
+    throw Exception("Failed to fetch employee");
+  }
+
+  return jsonDecode(res.body);
+}
   // ================= PROFILES  =================
 
   static Future<List<dynamic>> getProfiles() async {

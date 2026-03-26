@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:red_hrcrm/component/EmployeeDetailScreen.dart';
 import 'package:red_hrcrm/component/employeeinfo.dart';
 import '../services/api_service.dart';
-
 
 class EmployeeTable extends StatefulWidget {
   const EmployeeTable({super.key});
@@ -22,22 +22,46 @@ class _EmployeeTableState extends State<EmployeeTable> {
 
   Future<void> fetchEmployees() async {
     try {
-      final data = await ApiService.getEmployees(); // ✅ FIXED
+      final data = await ApiService.getEmployees();
       setState(() {
         employees = data;
         loading = false;
       });
-    }catch (e) {
-  print("Error: $e");
-  setState(() {
-    loading = false; 
-  });
-}
+    } catch (e) {
+      debugPrint("Error: $e");
+      setState(() => loading = false);
+    }
   }
 
   Future<void> deleteEmployee(int id) async {
-    await ApiService.deleteEmployee(id);
-    fetchEmployees();
+    // Show a confirmation dialog first (Standard for professional CRMs)
+    bool confirm =
+        await showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: const Text("Delete Employee?"),
+            content: const Text("This action cannot be undone."),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: const Text("Cancel"),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, true),
+                child: const Text(
+                  "Delete",
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+
+    if (confirm) {
+      await ApiService.deleteEmployee(id);
+      fetchEmployees();
+    }
   }
 
   void openCreatePage() async {
@@ -45,52 +69,100 @@ class _EmployeeTableState extends State<EmployeeTable> {
       context,
       MaterialPageRoute(builder: (_) => const CreateEmployeeFullPage()),
     );
-
-    fetchEmployees(); // 🔥 auto refresh after create
+    fetchEmployees();
   }
 
   @override
   Widget build(BuildContext context) {
     if (loading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(40.0),
+          child: CircularProgressIndicator(color: Colors.black),
+        ),
+      );
     }
 
     return Column(
       children: [
-        /// 🔥 ADD BUTTON
-        Align(
-          alignment: Alignment.centerRight,
-          child: ElevatedButton(
-            onPressed: openCreatePage,
-            child: const Text("Add Employee"),
+        /// TOP BAR
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 15),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                "Employee Directory",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+              ),
+              ElevatedButton.icon(
+                onPressed: openCreatePage,
+                icon: const Icon(Icons.add, size: 18),
+                label: const Text("ADD EMPLOYEE"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
 
-        const SizedBox(height: 10),
-
-        /// TABLE
+        /// TABLE CONTAINER
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.02),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
             border: Border.all(color: const Color(0xFFE5E7EB)),
           ),
           child: Column(
             children: [
               const _EmployeeTableHeader(),
-
+              if (employees.isEmpty)
+                const Padding(
+                  padding: EdgeInsets.all(40.0),
+                  child: Text(
+                    "No employees found.",
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ),
               ...employees.map((e) {
                 return _EmployeeTableRow(
                   data: _EmployeeRowData(
                     id: e['id'],
-                    name: e['full_name'] ?? '',
+                    name: e['full_name'] ?? 'N/A',
                     empId: "EMP-${e['id']}",
-
+                    role: e['position_held'] ?? 'Staff',
                     status: 'Active',
-                    statusColor: Colors.green,
-                    contact: e['email'] ?? '',
+                    contact: e['email'] ?? 'No Email',
+                    salary: e['salary_drawn'] ?? '-',
                   ),
                   onDelete: deleteEmployee,
+
+                  // ✅ ADD THIS
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            EmployeeDetailScreen(employeeId: e['id']),
+                      ),
+                    );
+                  },
                 );
               }).toList(),
             ],
@@ -100,6 +172,7 @@ class _EmployeeTableState extends State<EmployeeTable> {
     );
   }
 }
+
 /* ================= HEADER ================= */
 
 class _EmployeeTableHeader extends StatelessWidget {
@@ -108,18 +181,18 @@ class _EmployeeTableHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       decoration: const BoxDecoration(
-        color: Color(0xFFF3F4F6),
-        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+        color: Color(0xFFF9FAFB),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       child: const Row(
         children: [
-          _HeaderCell(text: 'EMPLOYEE', flex: 3),
-          _HeaderCell(text: 'DEPARTMENT', flex: 2),
-          _HeaderCell(text: 'ROLE', flex: 3),
+          _HeaderCell(text: 'EMPLOYEE', flex: 4),
+          _HeaderCell(text: 'POSITION', flex: 3),
           _HeaderCell(text: 'STATUS', flex: 2),
-          _HeaderCell(text: 'CONTACT', flex: 3),
+          _HeaderCell(text: 'SALARY', flex: 2),
+          _HeaderCell(text: 'CONTACT', flex: 4),
           _HeaderCell(text: 'ACTIONS', flex: 1, alignEnd: true),
         ],
       ),
@@ -133,7 +206,6 @@ class _HeaderCell extends StatelessWidget {
     required this.flex,
     this.alignEnd = false,
   });
-
   final String text;
   final int flex;
   final bool alignEnd;
@@ -146,11 +218,12 @@ class _HeaderCell extends StatelessWidget {
         alignment: alignEnd ? Alignment.centerRight : Alignment.centerLeft,
         child: Text(
           text,
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: const Color(0xFF6B7280),
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.6,
-              ),
+          style: const TextStyle(
+            color: Colors.black45,
+            fontWeight: FontWeight.w800,
+            fontSize: 10,
+            letterSpacing: 1.1,
+          ),
         ),
       ),
     );
@@ -163,121 +236,129 @@ class _EmployeeTableRow extends StatelessWidget {
   const _EmployeeTableRow({
     required this.data,
     required this.onDelete,
+    required this.onTap, // ✅ ADD THIS
   });
 
   final _EmployeeRowData data;
   final Function(int) onDelete;
+  final VoidCallback onTap; // ✅ ADD THIS
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Color(0xFFE5E7EB), width: 1),
+    return InkWell(
+      // ✅ MAKE ROW CLICKABLE
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        decoration: const BoxDecoration(
+          border: Border(
+            bottom: BorderSide(color: Color(0xFFF3F4F6), width: 1),
+          ),
         ),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 3,
-            child: Row(
-              children: [
-                const CircleAvatar(
-                  radius: 18,
-                  backgroundColor: Color(0xFF1F2937),
-                  child: Icon(Icons.person, size: 18, color: Colors.white),
-                ),
-                const SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      data.name,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: const Color(0xFF111827),
-                            fontWeight: FontWeight.w700,
-                          ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      data.empId,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: const Color(0xFF6B7280),
-                          ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            flex: 2,
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFE6F4F1),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                // child: Text(
-                //   data.department,
-                //   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                //         color: const Color(0xFF4B6E6E),
-                //         fontWeight: FontWeight.w600,
-                //       ),
-                // ),
-              ),
-            ),
-          ),
-          // Expanded(
-          //   flex: 3,
-          //   child: Text(
-          //     data.role,
-          //     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-          //           color: const Color(0xFF111827),
-          //           fontWeight: FontWeight.w600,
-          //         ),
-          //   ),
-          // ),
-          Expanded(
-            flex: 2,
-            child: Row(
-              children: [
-                Icon(Icons.circle, size: 8, color: data.statusColor),
-                const SizedBox(width: 8),
-                Text(
-                  data.status,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: const Color(0xFF111827),
-                        fontWeight: FontWeight.w600,
+        child: Row(
+          children: [
+            // Name & Avatar
+            Expanded(
+              flex: 4,
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 16,
+                    backgroundColor: const Color(0xFFF3F4F6),
+                    child: Text(
+                      data.name[0].toUpperCase(),
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
                       ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            flex: 3,
-            child: Text(
-              data.contact,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: const Color(0xFF4B5563),
+                    ),
                   ),
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: IconButton(
-                icon: const Icon(Icons.delete, color: Colors.red),
-                onPressed: () => onDelete(data.id),
+                  const SizedBox(width: 12),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        data.name,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13,
+                        ),
+                      ),
+                      Text(
+                        data.empId,
+                        style: const TextStyle(
+                          color: Colors.black38,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
+
+            Expanded(
+              flex: 3,
+              child: Text(
+                data.role,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
+              ),
+            ),
+
+            Expanded(
+              flex: 2,
+              child: Row(
+                children: [
+                  const Icon(Icons.circle, size: 8, color: Colors.green),
+                  const SizedBox(width: 6),
+                  Text(
+                    data.status,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            Expanded(
+              flex: 2,
+              child: Text(
+                data.salary,
+                style: const TextStyle(fontSize: 13, color: Colors.black54),
+              ),
+            ),
+
+            Expanded(
+              flex: 4,
+              child: Text(
+                data.contact,
+                style: const TextStyle(fontSize: 12, color: Colors.blueGrey),
+              ),
+            ),
+
+            Expanded(
+              flex: 1,
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.delete_outline,
+                    color: Colors.redAccent,
+                    size: 20,
+                  ),
+                  onPressed: () => onDelete(data.id),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -289,18 +370,18 @@ class _EmployeeRowData {
   final int id;
   final String name;
   final String empId;
-
+  final String role;
   final String status;
-  final Color statusColor;
   final String contact;
+  final String salary;
 
   const _EmployeeRowData({
     required this.id,
     required this.name,
     required this.empId,
-
+    required this.role,
     required this.status,
-    required this.statusColor,
     required this.contact,
+    required this.salary,
   });
 }

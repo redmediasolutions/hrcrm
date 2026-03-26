@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:red_hrcrm/component/choicechip.dart';
 import 'package:red_hrcrm/component/kpiboxes.dart';
 import 'package:red_hrcrm/component/table.dart';
@@ -18,7 +17,7 @@ class _HomepageState extends State<Homepage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white54,
-      //==================== APPBAR======================//
+
       appBar: AppBar(
         elevation: 0,
         leadingWidth: 500,
@@ -90,35 +89,6 @@ class _HomepageState extends State<Homepage> {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  SizedBox(
-                    height: 50,
-                    width: 200,
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        context.push('/CreateEmployeePage');
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF0C5D6B),
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 18,
-                          vertical: 12,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                      ),
-                      icon: const Icon(Icons.person_add_alt_1, size: 20),
-                      label: const Text(
-                        "Add New Employee",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ),
-                  ),
                 ],
               ),
               SizedBox(height: 20),
