@@ -31,12 +31,16 @@ class _LoginPageState extends State<LoginPage> {
       final user = userCredential.user;
 
       // 🎟 Get Firebase token
-      final token = await user!.getIdToken();
+      await user!.reload(); // 🔥 important for web
+      final token = await user.getIdToken(true); // 🔥 force refresh
 
       // 🌐 Call your API
       final response = await http.get(
         Uri.parse('https://api.hr.rd-crm.in/api/me'),
-        headers: {'Authorization': 'Bearer $token'},
+        headers: {
+  'Authorization': 'Bearer $token',
+  'Content-Type': 'application/json',
+}
       );
 
       if (response.statusCode == 200) {

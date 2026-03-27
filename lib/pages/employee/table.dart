@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:red_hrcrm/component/EmployeeDetailScreen.dart';
+<<<<<<< Updated upstream:lib/component/table.dart
+=======
+import 'package:red_hrcrm/component/createPayroll.dart';
+
+>>>>>>> Stashed changes:lib/pages/employee/table.dart
 import 'package:red_hrcrm/component/employeeinfo.dart';
 import '../services/api_service.dart';
 
@@ -34,7 +40,10 @@ class _EmployeeTableState extends State<EmployeeTable> {
   }
 
   Future<void> deleteEmployee(int id) async {
+<<<<<<< Updated upstream:lib/component/table.dart
     // Show a confirmation dialog first (Standard for professional CRMs)
+=======
+>>>>>>> Stashed changes:lib/pages/employee/table.dart
     bool confirm =
         await showDialog(
           context: context,
@@ -236,7 +245,11 @@ class _EmployeeTableRow extends StatelessWidget {
   const _EmployeeTableRow({
     required this.data,
     required this.onDelete,
+<<<<<<< Updated upstream:lib/component/table.dart
     required this.onTap, // ✅ ADD THIS
+=======
+    required this.onTap,
+>>>>>>> Stashed changes:lib/pages/employee/table.dart
   });
 
   final _EmployeeRowData data;
@@ -275,6 +288,7 @@ class _EmployeeTableRow extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 12),
+<<<<<<< Updated upstream:lib/component/table.dart
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -293,11 +307,37 @@ class _EmployeeTableRow extends StatelessWidget {
                         ),
                       ),
                     ],
+=======
+                  Flexible(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          data.name,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 13,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(
+                          data.empId,
+                          style: const TextStyle(
+                            color: Colors.black38,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ],
+                    ),
+>>>>>>> Stashed changes:lib/pages/employee/table.dart
                   ),
                 ],
               ),
             ),
+<<<<<<< Updated upstream:lib/component/table.dart
 
+=======
+>>>>>>> Stashed changes:lib/pages/employee/table.dart
             Expanded(
               flex: 3,
               child: Text(
@@ -305,11 +345,17 @@ class _EmployeeTableRow extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
+<<<<<<< Updated upstream:lib/component/table.dart
                   color: Colors.black87,
                 ),
               ),
             ),
 
+=======
+                ),
+              ),
+            ),
+>>>>>>> Stashed changes:lib/pages/employee/table.dart
             Expanded(
               flex: 2,
               child: Row(
@@ -326,6 +372,7 @@ class _EmployeeTableRow extends StatelessWidget {
                 ],
               ),
             ),
+<<<<<<< Updated upstream:lib/component/table.dart
 
             Expanded(
               flex: 2,
@@ -355,6 +402,52 @@ class _EmployeeTableRow extends StatelessWidget {
                   ),
                   onPressed: () => onDelete(data.id),
                 ),
+=======
+            Expanded(
+              flex: 2,
+              child: Text(
+                data.salary,
+                style: const TextStyle(fontSize: 13, color: Colors.black54),
+              ),
+            ),
+            Expanded(
+              flex: 4,
+              child: Text(
+                data.contact,
+                style: const TextStyle(fontSize: 12, color: Colors.blueGrey),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.attach_money,
+                      color: Colors.black54,
+                      size: 20,
+                    ),
+                    tooltip: 'Create/Update Payroll',
+                    onPressed: () {
+                      context.push(
+                        '/createpayroll',
+                        extra: data.empId, // ✅ direct int
+                      );
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.delete_outline,
+                      color: Colors.redAccent,
+                      size: 20,
+                    ),
+                    tooltip: 'Delete',
+                    onPressed: () => onDelete(data.id),
+                  ),
+                ],
+>>>>>>> Stashed changes:lib/pages/employee/table.dart
               ),
             ),
           ],

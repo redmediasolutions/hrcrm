@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 import 'package:red_hrcrm/auth/login.dart';
+import 'package:red_hrcrm/component/createPayroll.dart';
 import 'package:red_hrcrm/component/employeeinfo.dart';
 import 'package:red_hrcrm/pages/attendance/attendance.dart';
 
@@ -65,6 +66,14 @@ final GoRouter appRouter = GoRouter(
       path: '/Task',
       builder: (context, state) => const Task(),
     ),
+GoRoute(
+  path: '/createpayroll',
+  builder: (context, state) {
+    final employeeId = int.parse(state.uri.queryParameters['employeeId']!);
+
+    return CreateSalarySlipScreen(employeeId: employeeId);
+  },
+),
 
        
       ],
