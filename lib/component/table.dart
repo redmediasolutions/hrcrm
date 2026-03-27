@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:red_hrcrm/component/EmployeeDetailScreen.dart';
-import 'package:red_hrcrm/component/employeeinfo.dart';
+import 'package:red_hrcrm/component/createPayroll.dart';
+
+import 'package:red_hrcrm/component/employeeinfo.dart'; 
 import '../services/api_service.dart';
+
+
 
 class EmployeeTable extends StatefulWidget {
   const EmployeeTable({super.key});
@@ -28,35 +32,29 @@ class _EmployeeTableState extends State<EmployeeTable> {
         loading = false;
       });
     } catch (e) {
-      debugPrint("Error: $e");
+      debugPrint("Error fetching employees: $e");
       setState(() => loading = false);
     }
   }
 
   Future<void> deleteEmployee(int id) async {
-    // Show a confirmation dialog first (Standard for professional CRMs)
-    bool confirm =
-        await showDialog(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            title: const Text("Delete Employee?"),
-            content: const Text("This action cannot be undone."),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(ctx, false),
-                child: const Text("Cancel"),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(ctx, true),
-                child: const Text(
-                  "Delete",
-                  style: TextStyle(color: Colors.red),
-                ),
-              ),
-            ],
+    bool confirm = await showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("Delete Employee?"),
+        content: const Text("This action cannot be undone."),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text("Cancel"),
           ),
-        ) ??
-        false;
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text("Delete", style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    ) ?? false;
 
     if (confirm) {
       await ApiService.deleteEmployee(id);
@@ -78,7 +76,7 @@ class _EmployeeTableState extends State<EmployeeTable> {
       return const Center(
         child: Padding(
           padding: EdgeInsets.all(40.0),
-          child: CircularProgressIndicator(color: Colors.black),
+          child: CircularProgressIndicator(color: Color(0xFF0C5D6B)),
         ),
       );
     }
@@ -102,13 +100,8 @@ class _EmployeeTableState extends State<EmployeeTable> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 12,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
               ),
             ],
@@ -135,10 +128,7 @@ class _EmployeeTableState extends State<EmployeeTable> {
               if (employees.isEmpty)
                 const Padding(
                   padding: EdgeInsets.all(40.0),
-                  child: Text(
-                    "No employees found.",
-                    style: TextStyle(color: Colors.grey),
-                  ),
+                  child: Text("No employees found.", style: TextStyle(color: Colors.grey)),
                 ),
               ...employees.map((e) {
                 return _EmployeeTableRow(
@@ -149,17 +139,14 @@ class _EmployeeTableState extends State<EmployeeTable> {
                     role: e['position_held'] ?? 'Staff',
                     status: 'Active',
                     contact: e['email'] ?? 'No Email',
-                    salary: e['salary_drawn'] ?? '-',
+                    salary: e['salary_drawn']?.toString() ?? '-',
                   ),
                   onDelete: deleteEmployee,
-
-                  // ✅ ADD THIS
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) =>
-                            EmployeeDetailScreen(employeeId: e['id']),
+                        builder: (_) => EmployeeDetailScreen(employeeId: e['id']),
                       ),
                     );
                   },
@@ -172,8 +159,6 @@ class _EmployeeTableState extends State<EmployeeTable> {
     );
   }
 }
-
-/* ================= HEADER ================= */
 
 class _EmployeeTableHeader extends StatelessWidget {
   const _EmployeeTableHeader();
@@ -193,7 +178,7 @@ class _EmployeeTableHeader extends StatelessWidget {
           _HeaderCell(text: 'STATUS', flex: 2),
           _HeaderCell(text: 'SALARY', flex: 2),
           _HeaderCell(text: 'CONTACT', flex: 4),
-          _HeaderCell(text: 'ACTIONS', flex: 1, alignEnd: true),
+          _HeaderCell(text: 'ACTIONS', flex: 2, alignEnd: true),
         ],
       ),
     );
@@ -201,11 +186,7 @@ class _EmployeeTableHeader extends StatelessWidget {
 }
 
 class _HeaderCell extends StatelessWidget {
-  const _HeaderCell({
-    required this.text,
-    required this.flex,
-    this.alignEnd = false,
-  });
+  const _HeaderCell({required this.text, required this.flex, this.alignEnd = false});
   final String text;
   final int flex;
   final bool alignEnd;
@@ -230,131 +211,82 @@ class _HeaderCell extends StatelessWidget {
   }
 }
 
-/* ================= ROW ================= */
-
 class _EmployeeTableRow extends StatelessWidget {
-  const _EmployeeTableRow({
-    required this.data,
-    required this.onDelete,
-    required this.onTap, // ✅ ADD THIS
-  });
+  const _EmployeeTableRow({required this.data, required this.onDelete, required this.onTap});
 
   final _EmployeeRowData data;
   final Function(int) onDelete;
-  final VoidCallback onTap; // ✅ ADD THIS
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      // ✅ MAKE ROW CLICKABLE
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         decoration: const BoxDecoration(
-          border: Border(
-            bottom: BorderSide(color: Color(0xFFF3F4F6), width: 1),
-          ),
+          border: Border(bottom: BorderSide(color: Color(0xFFF3F4F6), width: 1)),
         ),
         child: Row(
           children: [
-            // Name & Avatar
             Expanded(
               flex: 4,
               child: Row(
                 children: [
                   CircleAvatar(
-                    radius: 16,
+                    radius: 18,
                     backgroundColor: const Color(0xFFF3F4F6),
-                    child: Text(
-                      data.name[0].toUpperCase(),
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    child: Text(data.name[0].toUpperCase(),
+                        style: const TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.bold)),
                   ),
                   const SizedBox(width: 12),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        data.name,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 13,
-                        ),
-                      ),
-                      Text(
-                        data.empId,
-                        style: const TextStyle(
-                          color: Colors.black38,
-                          fontSize: 11,
-                        ),
-                      ),
-                    ],
+                  Flexible(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(data.name, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13), overflow: TextOverflow.ellipsis),
+                        Text(data.empId, style: const TextStyle(color: Colors.black38, fontSize: 11)),
+                      ],
+                    ),
                   ),
                 ],
               ),
             ),
-
-            Expanded(
-              flex: 3,
-              child: Text(
-                data.role,
-                style: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
-                ),
-              ),
-            ),
-
+            Expanded(flex: 3, child: Text(data.role, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600))),
             Expanded(
               flex: 2,
               child: Row(
                 children: [
                   const Icon(Icons.circle, size: 8, color: Colors.green),
                   const SizedBox(width: 6),
-                  Text(
-                    data.status,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
+                  Text(data.status, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
                 ],
               ),
             ),
-
+            Expanded(flex: 2, child: Text(data.salary, style: const TextStyle(fontSize: 13, color: Colors.black54))),
+            Expanded(flex: 4, child: Text(data.contact, style: const TextStyle(fontSize: 12, color: Colors.blueGrey), overflow: TextOverflow.ellipsis)),
             Expanded(
               flex: 2,
-              child: Text(
-                data.salary,
-                style: const TextStyle(fontSize: 13, color: Colors.black54),
-              ),
-            ),
-
-            Expanded(
-              flex: 4,
-              child: Text(
-                data.contact,
-                style: const TextStyle(fontSize: 12, color: Colors.blueGrey),
-              ),
-            ),
-
-            Expanded(
-              flex: 1,
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.delete_outline,
-                    color: Colors.redAccent,
-                    size: 20,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.attach_money, color: Colors.black54, size: 20),
+                    tooltip: 'Salary Slip',
+                    onPressed: () {
+                      // Navigate to the UI we generated earlier
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const CreateSalarySlipScreen()),
+                      );
+                    },
                   ),
-                  onPressed: () => onDelete(data.id),
-                ),
+                  IconButton(
+                    icon: const Icon(Icons.delete_outline, color: Colors.redAccent, size: 20),
+                    tooltip: 'Delete',
+                    onPressed: () => onDelete(data.id),
+                  ),
+                ],
               ),
             ),
           ],
@@ -364,24 +296,11 @@ class _EmployeeTableRow extends StatelessWidget {
   }
 }
 
-/* ================= MODEL ================= */
-
 class _EmployeeRowData {
   final int id;
-  final String name;
-  final String empId;
-  final String role;
-  final String status;
-  final String contact;
-  final String salary;
-
+  final String name, empId, role, status, contact, salary;
   const _EmployeeRowData({
-    required this.id,
-    required this.name,
-    required this.empId,
-    required this.role,
-    required this.status,
-    required this.contact,
-    required this.salary,
+    required this.id, required this.name, required this.empId, 
+    required this.role, required this.status, required this.contact, required this.salary,
   });
 }
