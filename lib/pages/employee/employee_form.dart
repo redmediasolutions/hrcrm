@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:red_hrcrm/component/table.dart';
+import 'package:red_hrcrm/pages/employee/employeetable.dart';
 
 
 class EmployeeForm extends StatelessWidget {

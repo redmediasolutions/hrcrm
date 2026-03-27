@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:red_hrcrm/component/choicechip.dart';
 import 'package:red_hrcrm/component/kpiboxes.dart';
-import 'package:red_hrcrm/component/table.dart';
+import 'package:red_hrcrm/pages/employee/employeetable.dart';
 
 String selectedMethod = "All Employess";
 

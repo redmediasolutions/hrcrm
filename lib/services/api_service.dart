@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:red_hrcrm/models/employeepaginatedmodel.dart';
 
 class ApiService {
   static const String baseUrl = "https://api.hr.rd-crm.in";
@@ -136,4 +137,53 @@ static Future<List<Map<String, dynamic>>> getRealTimeActivity() async {
 
     return jsonDecode(res.body);
   }
+// ========== FETCH EMPLOYEE SQL VIEW DATA ======
+static Future<PaginatedEmployeeResponse> getFullEmployees({
+  int page = 1,
+  int limit = 10,
+}) async {
+  try {
+    print("🔄 Fetching Employees...");
+    print("➡️ Page: $page | Limit: $limit");
+
+    final token = await _getToken();
+
+    print("🔑 Token fetched: ${token.substring(0, 20)}...");
+
+    final url = "$baseUrl/api/employees/full?page=$page&limit=$limit";
+    print("🌐 Request URL: $url");
+
+    final res = await http.get(
+      Uri.parse(url),
+      headers: {
+        "Authorization": "Bearer $token",
+      },
+    );
+
+    print("📡 STATUS CODE: ${res.statusCode}");
+    print("📦 RAW RESPONSE: ${res.body}");
+
+    if (res.statusCode != 200) {
+      print("❌ API ERROR: ${res.body}");
+      throw Exception("Failed to fetch full employees");
+    }
+
+    final decoded = jsonDecode(res.body);
+
+    print("✅ JSON DECODE SUCCESS");
+    print("📊 Total Records: ${decoded['pagination']?['total']}");
+    print("📄 Current Page: ${decoded['pagination']?['page']}");
+    print("📚 Total Pages: ${decoded['pagination']?['totalPages']}");
+
+    final response = PaginatedEmployeeResponse.fromJson(decoded);
+
+    print("🎯 Parsed Employees Count: ${response.data.length}");
+
+    return response;
+
+  } catch (e) {
+    print("🔥 ERROR in getFullEmployees: $e");
+    rethrow;
+  }
+}
 }
