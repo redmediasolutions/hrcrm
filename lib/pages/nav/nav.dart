@@ -4,8 +4,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 import 'package:red_hrcrm/auth/login.dart';
 import 'package:red_hrcrm/component/employeeinfo.dart';
-import 'package:red_hrcrm/homepage.dart';
-import 'package:red_hrcrm/shell.dart';
+import 'package:red_hrcrm/pages/attendance/attendance.dart';
+
+import 'package:red_hrcrm/pages/nav/shell.dart';
+import 'package:red_hrcrm/pages/payroll/payroll.dart';
+import 'package:red_hrcrm/pages/staff/staff_dashboard.dart';
+import 'package:red_hrcrm/pages/task/task.dart';
 
 final firebaseAuth = FirebaseAuth.instance;
 
@@ -48,6 +52,18 @@ final GoRouter appRouter = GoRouter(
          GoRoute(
       path: '/CreateEmployeePage',
       builder: (context, state) => const CreateEmployeeFullPage(),
+    ),
+    GoRoute(
+      path: '/Payroll',
+      builder: (context, state) => const Payroll(),
+    ),
+      GoRoute(
+      path: '/Attendance',
+      builder: (context, state) => const Attendance(),
+    ),
+     GoRoute(
+      path: '/Task',
+      builder: (context, state) => const Task(),
     ),
 
        

@@ -101,6 +101,25 @@ static Future<Map<String, dynamic>> getEmployeeById(int id) async {
 
   return jsonDecode(res.body);
 }
+
+//attendance 
+static Future<List<Map<String, dynamic>>> getRealTimeActivity() async {
+  final token = await _getToken();
+
+  final res = await http.get(
+    Uri.parse("$baseUrl/api/attendance/realtime"),
+    headers: {
+      "Authorization": "Bearer $token",
+    },
+  );
+
+  if (res.statusCode != 200) {
+    throw Exception("Failed to fetch realtime activity");
+  }
+
+  final List data = jsonDecode(res.body);
+  return data.cast<Map<String, dynamic>>();
+}
   // ================= PROFILES  =================
 
   static Future<List<dynamic>> getProfiles() async {
