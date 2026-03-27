@@ -89,14 +89,17 @@ static Future<Map<String, dynamic>> getEmployeeById(int id) async {
   final token = await _getToken();
 
   final res = await http.get(
-    Uri.parse("$baseUrl/api/employees/$id"),
+    Uri.parse("$baseUrl/api/employees/full/$id"), 
     headers: {
       "Authorization": "Bearer $token",
     },
   );
 
+  print("GET EMPLOYEE STATUS: ${res.statusCode}");
+  print("GET EMPLOYEE BODY: ${res.body}");
+
   if (res.statusCode != 200) {
-    throw Exception("Failed to fetch employee");
+    throw Exception("Failed to fetch employee: ${res.body}");
   }
 
   return jsonDecode(res.body);
@@ -120,6 +123,30 @@ static Future<List<Map<String, dynamic>>> getRealTimeActivity() async {
   final List data = jsonDecode(res.body);
   return data.cast<Map<String, dynamic>>();
 }
+//to read reports
+static Future<List<dynamic>> getDailyReports() async {
+  try {
+    final token = await _getToken();
+    final url = Uri.parse("$baseUrl/api/daily-reports");
+
+    final res = await http.get(
+      url,
+      headers: {
+        "Authorization": "Bearer $token",
+      },
+    );
+
+    if (res.statusCode == 200) {
+      return jsonDecode(res.body);
+    } else {
+      throw Exception("Failed to fetch reports");
+    }
+  } catch (e) {
+    throw Exception("API Error: $e");
+  }
+}
+
+
   // ================= PROFILES  =================
 
   static Future<List<dynamic>> getProfiles() async {
@@ -136,4 +163,6 @@ static Future<List<Map<String, dynamic>>> getRealTimeActivity() async {
 
     return jsonDecode(res.body);
   }
+
+
 }

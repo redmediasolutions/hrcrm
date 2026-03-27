@@ -12,11 +12,9 @@ class SecondarysideNavbar extends StatelessWidget {
     required String label,
   }) {
     // final currentPath = GoRouterState.of(context).uri.path;
-    final currentPath = GoRouter.of(
-      context,
-    ).routerDelegate.currentConfiguration.uri.path;
+final currentPath = GoRouterState.of(context).uri.path;
 
-    final isSelected = currentPath == route;
+    final isSelected = currentPath.startsWith(route);
 
     return InkWell(
       onTap: () => context.go(route),
@@ -122,19 +120,19 @@ class SecondarysideNavbar extends StatelessWidget {
           ),
           _item(
             context,
-            route: '/Payroll',
+            route: '/payroll',
             icon: Icons.payment,
             label: "Payroll",
           ),
             _item(
             context,
-            route: '/Attendance',
+            route: '/attendance',
             icon: Icons.calendar_today,
             label: "Attendance",
           ),
             _item(
             context,
-            route: '/Task',
+            route: '/task',
             icon: Icons.task,
             label: "Task",
           ),
