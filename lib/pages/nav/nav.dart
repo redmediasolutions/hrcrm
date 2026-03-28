@@ -70,11 +70,10 @@ final GoRouter appRouter = GoRouter(
           },
         ),
         GoRoute(
-          path: '/employee-details',
+          path: '/employee-details/:id',
           builder: (context, state) {
-            final employeeId = state.extra as int;
-
-            return EmployeeDetailScreen(employeeId: employeeId);
+            final id = int.parse(state.pathParameters['id']!);
+            return EmployeeDetailScreen(employeeId: id);
           },
         ),
         GoRoute(

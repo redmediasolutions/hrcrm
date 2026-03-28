@@ -20,35 +20,37 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
   SingleEmployeeModel? employee;
   bool loading = true;
 
-  // 🔥 NEW MODELS DATA
+  // 🔥 Inline Add States
+  bool isAddingJob = false;
+  bool isAddingFamily = false;
+
+  // 🔥 Job Controllers
+  late TextEditingController newCompanyCtrl = TextEditingController();
+  late TextEditingController newPositionCtrl = TextEditingController();
+  late TextEditingController newSalaryCtrl = TextEditingController();
+
+  // 🔥 Family Controllers
+  late TextEditingController newMemberNameCtrl = TextEditingController();
+  late TextEditingController newRelationCtrl = TextEditingController();
+  late TextEditingController newAgeCtrl = TextEditingController();
+
   PersonalModel? personal;
   ContactModel? contact;
   List<EmploymentModel> employments = [];
   List<FamilyModel> family = [];
 
-  /// 🔥 EDIT STATES
   bool isPersonalEditing = false;
-  bool isProfessionalEditing = false;
   bool isContactEditing = false;
 
-  /// 🔥 CONTROLLERS
-  late TextEditingController nameCtrl;
-  late TextEditingController dobCtrl;
-  late TextEditingController genderCtrl;
+  late TextEditingController nameCtrl, dobCtrl, genderCtrl;
+  late TextEditingController emailCtrl, phoneCtrl, addressCtrl;
 
-  late TextEditingController roleCtrl;
-  late TextEditingController companyCtrl;
-  late TextEditingController salaryCtrl;
-
-  late TextEditingController emailCtrl;
-  late TextEditingController phoneCtrl;
-  late TextEditingController addressCtrl;
+  final Color primaryTeal = const Color(0xFF0C5D6B);
+  final Color bgGrey = const Color(0xFFF7F8FA);
 
   @override
   void initState() {
     super.initState();
-    print("🚀 EmployeeDetailScreen OPENED");
-    print("🆔 Employee ID: ${widget.employeeId}");
     fetch();
   }
 
@@ -62,9 +64,13 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
 
       if (!mounted) return;
 
-      // 🔥 CONTROLLERS
+      String cleanDob = p.dob ?? "";
+      if (cleanDob.contains("T")) {
+        cleanDob = cleanDob.split("T")[0];
+      }
+
       nameCtrl = TextEditingController(text: p.fullName ?? "");
-      dobCtrl = TextEditingController(text: p.dob ?? "");
+      dobCtrl = TextEditingController(text: cleanDob);
       genderCtrl = TextEditingController(text: p.gender ?? "");
 
       emailCtrl = TextEditingController(text: c.email ?? "");
@@ -80,22 +86,18 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
         loading = false;
       });
     } catch (e) {
-      print("❌ FETCH ERROR: $e");
-      setState(() => loading = false);
+      if (mounted) setState(() => loading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     if (loading || employee == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return Scaffold(backgroundColor: bgGrey, body: const Center(child: CircularProgressIndicator()));
     }
 
-    final d = employee!;
-
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F8FA),
-
+      backgroundColor: bgGrey,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -103,169 +105,86 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => context.pop(),
         ),
-        title: const Text(
-          "Employee Details",
-          style: TextStyle(color: Colors.black),
-        ),
+        title: Text("Employee Profile: ${employee!.fullName}", style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
       ),
-
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(32),
         child: Column(
           children: [
-            /// 🔥 HERO HEADER
-            _heroHeader(d),
-
-            const SizedBox(height: 24),
-
-            _sectionCard(
-              title: "Personal Information",
-              icon: Icons.person,
-              isEditing: isPersonalEditing,
-              onEdit: () => setState(() => isPersonalEditing = true),
-              onCancel: () => setState(() => isPersonalEditing = false),
-              onUpdate: () async {
-                await ApiService.savePersonal(widget.employeeId, {
-                  "full_name": nameCtrl.text,
-                  "dob": dobCtrl.text,
-                  "gender": genderCtrl.text,
-                });
-
-                setState(() => isPersonalEditing = false);
-              },
+            _buildHeroHeader(),
+            const SizedBox(height: 32),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _editableField("Full Name", nameCtrl, isPersonalEditing),
-                _editableField("DOB", dobCtrl, isPersonalEditing),
-                _editableField("Gender", genderCtrl, isPersonalEditing),
-              ],
-            ),
-
-            _sectionCard(
-              title: "Employment History",
-              icon: Icons.work,
-              isEditing: false,
-              onEdit: () {},
-              onCancel: () {},
-              onUpdate: () {},
-              children: [
-                ...employments.map(
-                  (job) => Container(
-                    width: 250,
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[50],
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          job.employerName ?? "",
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Text(job.positionHeld ?? ""),
-                        Text("₹ ${job.salaryDrawn ?? ""}"),
-                      ],
-                    ),
+                Expanded(
+                  flex: 2,
+                  child: Column(
+                    children: [
+                      _buildSectionCard(
+                        title: "Personal Information",
+                        icon: Icons.person_outline,
+                        isEditing: isPersonalEditing,
+                        onEdit: () => setState(() => isPersonalEditing = true),
+                        onSave: () async {
+                          await ApiService.savePersonal(widget.employeeId, {
+                            "full_name": nameCtrl.text,
+                            "dob": dobCtrl.text,
+                            "gender": genderCtrl.text,
+                          });
+                          setState(() => isPersonalEditing = false);
+                        },
+                        children: [
+                          _infoField("Full Name", nameCtrl, isPersonalEditing),
+                          _infoField("Date of Birth", dobCtrl, isPersonalEditing),
+                          _infoField("Gender", genderCtrl, isPersonalEditing),
+                        ],
+                      ),
+                      _buildListSection<EmploymentModel>(
+                        title: "Professional Details",
+                        icon: Icons.badge_outlined,
+                        items: employments,
+                        onAdd: () => setState(() => isAddingJob = true),
+                        itemBuilder: (job) => _buildDetailTile(job.employerName, job.positionHeld, "₹ ${job.salaryDrawn}"),
+                        extraWidget: isAddingJob ? _buildInlineJobForm() : null,
+                      ),
+                    ],
                   ),
                 ),
-
-                /// ➕ ADD BUTTON
-                GestureDetector(
-                  onTap: () async {
-                    await ApiService.addEmployment(widget.employeeId, {
-                      "employer_name": "New Company",
-                      "position_held": "Role",
-                      "salary_drawn": "0",
-                    });
-
-                    fetch(); // refresh
-                  },
-                  child: Container(
-                    width: 250,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Center(child: Text("+ Add Job")),
+                const SizedBox(width: 32),
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    children: [
+                      _buildSectionCard(
+                        title: "Contact Information",
+                        icon: Icons.alternate_email,
+                        isEditing: isContactEditing,
+                        onEdit: () => setState(() => isContactEditing = true),
+                        onSave: () async {
+                          await ApiService.saveContact(widget.employeeId, {
+                            "email": emailCtrl.text,
+                            "phone": phoneCtrl.text,
+                            "correspondence_address": addressCtrl.text,
+                          });
+                          setState(() => isContactEditing = false);
+                        },
+                        children: [
+                          _infoField("Work Email", emailCtrl, isContactEditing, isFullWidth: true),
+                          _infoField("Phone Number", phoneCtrl, isContactEditing, isFullWidth: true),
+                          _infoField("Residential Address", addressCtrl, isContactEditing, isFullWidth: true),
+                        ],
+                      ),
+                      _buildListSection<FamilyModel>(
+                        title: "Family Details",
+                        icon: Icons.family_restroom_outlined,
+                        items: family,
+                        onAdd: () => setState(() => isAddingFamily = true),
+                        itemBuilder: (f) => _buildDetailTile(f.name, f.relation, "Age: ${f.age}"),
+                        extraWidget: isAddingFamily ? _buildInlineFamilyForm() : null,
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-
-            _sectionCard(
-              title: "Family Details",
-              icon: Icons.family_restroom,
-              isEditing: false,
-              onEdit: () {},
-              onCancel: () {},
-              onUpdate: () {},
-              children: [
-                ...family.map(
-                  (f) => Container(
-                    width: 250,
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[50],
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          f.name ?? "",
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Text(f.relation ?? ""),
-                        Text("Age: ${f.age ?? "-"}"),
-                      ],
-                    ),
-                  ),
-                ),
-
-                GestureDetector(
-                  onTap: () async {
-                    await ApiService.addFamily(widget.employeeId, {
-                      "name": "New Member",
-                      "relation": "Relation",
-                      "age": 0,
-                    });
-
-                    fetch();
-                  },
-                  child: Container(
-                    width: 250,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Center(child: Text("+ Add Family")),
-                  ),
-                ),
-              ],
-            ),
-
-            _sectionCard(
-              title: "Contact Information",
-              icon: Icons.contact_page,
-              isEditing: isContactEditing,
-              onEdit: () => setState(() => isContactEditing = true),
-              onCancel: () => setState(() => isContactEditing = false),
-              onUpdate: () async {
-                await ApiService.saveContact(widget.employeeId, {
-                  "email": emailCtrl.text,
-                  "phone": phoneCtrl.text,
-                  "correspondence_address": addressCtrl.text,
-                });
-
-                setState(() => isContactEditing = false);
-              },
-              children: [
-                _editableField("Email", emailCtrl, isContactEditing),
-                _editableField("Phone", phoneCtrl, isContactEditing),
-                _editableField("Address", addressCtrl, isContactEditing),
               ],
             ),
           ],
@@ -274,232 +193,225 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
     );
   }
 
-  /// 🔥 HERO HEADER
-  Widget _heroHeader(SingleEmployeeModel d) {
+  // 🔥 NEW: Inline Job Form
+  Widget _buildInlineJobForm() {
     return Container(
-      padding: const EdgeInsets.all(24),
+      margin: const EdgeInsets.only(top: 8),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        color: Colors.blue.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.blue.shade100),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(child: _inlineTextField("Company Name", newCompanyCtrl)),
+              const SizedBox(width: 12),
+              Expanded(child: _inlineTextField("Position", newPositionCtrl)),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(child: _inlineTextField("Salary Drawn", newSalaryCtrl)),
+              const SizedBox(width: 12),
+              IconButton(
+                icon: const Icon(Icons.check_circle, color: Colors.green),
+                onPressed: () async {
+                  await ApiService.addEmployment(widget.employeeId, {
+                    "employer_name": newCompanyCtrl.text,
+                    "position_held": newPositionCtrl.text,
+                    "salary_drawn": newSalaryCtrl.text,
+                  });
+                  newCompanyCtrl.clear(); newPositionCtrl.clear(); newSalaryCtrl.clear();
+                  setState(() => isAddingJob = false);
+                  fetch();
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.cancel, color: Colors.red),
+                onPressed: () => setState(() => isAddingJob = false),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 🔥 NEW: Inline Family Form
+  Widget _buildInlineFamilyForm() {
+    return Container(
+      margin: const EdgeInsets.only(top: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.blue.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.blue.shade100),
       ),
       child: Row(
         children: [
-          CircleAvatar(
-            radius: 40,
-            backgroundColor: Colors.black,
-            child: Text(
-              d.fullName.isNotEmpty ? d.fullName[0] : "?",
-              style: const TextStyle(color: Colors.white, fontSize: 22),
-            ),
+          Expanded(child: _inlineTextField("Name", newMemberNameCtrl)),
+          const SizedBox(width: 8),
+          Expanded(child: _inlineTextField("Relation", newRelationCtrl)),
+          const SizedBox(width: 8),
+          SizedBox(width: 60, child: _inlineTextField("Age", newAgeCtrl)),
+          const SizedBox(width: 8),
+          IconButton(
+            icon: const Icon(Icons.check_circle, color: Colors.green),
+            onPressed: () async {
+              await ApiService.addFamily(widget.employeeId, {
+                "name": newMemberNameCtrl.text,
+                "relation": newRelationCtrl.text,
+                "age": int.tryParse(newAgeCtrl.text) ?? 0,
+              });
+              newMemberNameCtrl.clear(); newRelationCtrl.clear(); newAgeCtrl.clear();
+              setState(() => isAddingFamily = false);
+              fetch();
+            },
           ),
-          const SizedBox(width: 20),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                d.fullName,
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                d.positionHeld ?? "",
-                style: const TextStyle(color: Colors.grey),
-              ),
-            ],
+          IconButton(
+            icon: const Icon(Icons.cancel, color: Colors.red),
+            onPressed: () => setState(() => isAddingFamily = false),
           ),
         ],
       ),
     );
   }
 
-  /// 🔥 SECTION CARD
-  Widget _sectionCard({
-    required String title,
-    required IconData icon,
-    required bool isEditing,
-    required VoidCallback onEdit,
-    required VoidCallback onCancel,
-    required VoidCallback onUpdate,
-    required List<Widget> children,
-  }) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 20),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+  Widget _inlineTextField(String hint, TextEditingController ctrl) {
+    return TextField(
+      controller: ctrl,
+      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+      decoration: InputDecoration(
+        hintText: hint,
+        isDense: true,
+        border: const OutlineInputBorder(),
+        contentPadding: const EdgeInsets.all(10),
       ),
-      child: Column(
+    );
+  }
+
+  Widget _buildHeroHeader() {
+    return Container(
+      padding: const EdgeInsets.all(32),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: Colors.grey.shade200)),
+      child: Row(
         children: [
-          /// HEADER
+          CircleAvatar(
+            radius: 45,
+            backgroundColor: primaryTeal.withOpacity(0.1),
+            child: Text(employee!.fullName.isNotEmpty ? employee!.fullName[0] : "?", style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: primaryTeal)),
+          ),
+          const SizedBox(width: 24),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text("ACTIVE EMPLOYEE", style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.teal, letterSpacing: 1.2)),
+                Text(employee!.fullName, style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w900, letterSpacing: -0.5)),
+                Text("${employee!.positionHeld ?? 'Staff Member'} • ${employee!.email}", style: TextStyle(color: Colors.grey.shade600, fontSize: 16)),
+              ],
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {},
+            style: ElevatedButton.styleFrom(backgroundColor: primaryTeal, padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+            child: const Text("Action Menu", style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionCard({required String title, required IconData icon, required bool isEditing, required VoidCallback onEdit, required VoidCallback onSave, required List<Widget> children}) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 24),
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: Colors.grey.shade100)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  Icon(icon),
-                  const SizedBox(width: 10),
-                  Text(
-                    title,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-
-              Row(
-                children: [
-                  if (!isEditing)
-                    TextButton(onPressed: onEdit, child: const Text("Edit")),
-                  if (isEditing) ...[
-                    TextButton(
-                      onPressed: onCancel,
-                      child: const Text("Cancel"),
-                    ),
-                    ElevatedButton(
-                      onPressed: onUpdate,
-                      child: const Text("Update"),
-                    ),
-                  ],
-                ],
-              ),
+              Row(children: [Icon(icon, size: 20, color: primaryTeal), const SizedBox(width: 12), Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold))]),
+              isEditing 
+                ? TextButton(onPressed: onSave, child: const Text("Save Changes", style: TextStyle(fontWeight: FontWeight.bold)))
+                : OutlinedButton(onPressed: onEdit, style: OutlinedButton.styleFrom(side: BorderSide(color: Colors.grey.shade300)), child: const Text("Edit", style: TextStyle(color: Colors.black))),
             ],
           ),
-
-          const SizedBox(height: 16),
-
-          Wrap(spacing: 40, runSpacing: 20, children: children),
+          const Divider(height: 40),
+          Wrap(spacing: 32, runSpacing: 24, children: children),
         ],
       ),
     );
   }
 
-  /// 🔥 EDIT FIELD
-  Widget _editableField(
-    String label,
-    TextEditingController controller,
-    bool isEditing,
-  ) {
-    return SizedBox(
-      width: 200,
+  Widget _buildListSection<T>({
+    required String title,
+    required IconData icon,
+    required List<T> items,
+    required VoidCallback onAdd,
+    required Widget Function(T) itemBuilder,
+    Widget? extraWidget,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 24),
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: Colors.grey.shade100)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label.toUpperCase(),
-            style: const TextStyle(fontSize: 10, color: Colors.grey),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(children: [Icon(icon, size: 20, color: primaryTeal), const SizedBox(width: 12), Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold))]),
+              IconButton(onPressed: onAdd, icon: const Icon(Icons.add_circle_outline, color: Colors.blue)),
+            ],
           ),
-          const SizedBox(height: 6),
-
-          isEditing
-              ? TextField(
-                  controller: controller,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    isDense: true,
-                  ),
-                )
-              : Text(
-                  controller.text,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
+          const Divider(height: 40),
+          ...items.map((item) => itemBuilder(item)),
+          if (extraWidget != null) extraWidget,
         ],
       ),
     );
   }
 
-  Widget _rightPanel() {
-    return Column(
-      children: [
-        /// GLASS CARD
-        Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.8),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Column(
+  Widget _infoField(String label, TextEditingController ctrl, bool isEditing, {bool isFullWidth = false}) {
+    return SizedBox(
+      width: isFullWidth ? double.infinity : 180,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label.toUpperCase(), style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.grey.shade500, letterSpacing: 1.1)),
+          const SizedBox(height: 8),
+          isEditing 
+            ? TextField(controller: ctrl, decoration: InputDecoration(isDense: true, contentPadding: const EdgeInsets.symmetric(vertical: 8), border: UnderlineInputBorder(borderSide: BorderSide(color: primaryTeal))))
+            : Text(ctrl.text.isEmpty ? "—" : ctrl.text, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDetailTile(String? primary, String? secondary, String? tertiary) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(color: bgGrey, borderRadius: BorderRadius.circular(12)),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              Text("HR Context", style: TextStyle(fontWeight: FontWeight.bold)),
-              SizedBox(height: 10),
-              Text(
-                "This profile is verified and active in the workforce database.",
-                style: TextStyle(fontSize: 12, color: Colors.grey),
-              ),
-              SizedBox(height: 16),
-              Row(
-                children: [
-                  Icon(Icons.check_circle, color: Colors.green),
-                  SizedBox(width: 8),
-                  Text("Verified & Active"),
-                ],
-              ),
+            children: [
+              Text(primary ?? "Unknown", style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text(secondary ?? "Not specified", style: TextStyle(color: Colors.grey.shade600, fontSize: 13)),
             ],
           ),
-        ),
-
-        const SizedBox(height: 16),
-
-        /// ACTIONS
-        Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Column(
-            children: const [
-              ListTile(
-                leading: Icon(Icons.lock),
-                title: Text("Reset Credentials"),
-              ),
-              ListTile(leading: Icon(Icons.edit), title: Text("Update Role")),
-              ListTile(
-                leading: Icon(Icons.delete, color: Colors.red),
-                title: Text(
-                  "Deactivate Employee",
-                  style: TextStyle(color: Colors.red),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _iconText(IconData icon, String? text) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, size: 16, color: Colors.grey),
-        const SizedBox(width: 6),
-        Text(text ?? "-", style: const TextStyle(fontSize: 12)),
-      ],
-    );
-  }
-
-  Widget _gridItem(String label, dynamic value) {
-    return SizedBox(
-      width: 180,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label.toUpperCase(),
-            style: const TextStyle(
-              fontSize: 10,
-              color: Colors.grey,
-              letterSpacing: 1,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            value?.toString() ?? "-",
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
+          Text(tertiary ?? "", style: const TextStyle(fontWeight: FontWeight.w600, color: Colors.teal)),
         ],
       ),
     );

@@ -128,131 +128,129 @@ class _EmployeeTableState extends State<EmployeeTable> {
 
         /// TABLE CONTAINER
         Container(
-  decoration: BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(16),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.02),
-        blurRadius: 10,
-        offset: const Offset(0, 4),
-      ),
-    ],
-    border: Border.all(color: const Color(0xFFE5E7EB)),
-  ),
-  child: Column(
-    children: [
-      const EmployeeTableHeader(),
-
-      if (employees.isEmpty)
-        const Padding(
-          padding: EdgeInsets.all(40.0),
-          child: Text(
-            "No employees found.",
-            style: TextStyle(color: Colors.grey),
-          ),
-        ),
-
-      ...employees.map((e) {
-        return Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 14,
-          ),
-          decoration: const BoxDecoration(
-            border: Border(
-              bottom: BorderSide(color: Color(0xFFF3F4F6)),
-            ),
-          ),
-          child: Row(
-            children: [
-              /// NAME
-              Expanded(
-                flex: 4,
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 18,
-                      backgroundColor: const Color(0xFFF3F4F6),
-                      child: Text(
-                        (e.fullName != null && e.fullName!.isNotEmpty)
-                            ? e.fullName![0]
-                            : "?",
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          e.fullName ?? "N/A",
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          "EMP-${e.id.toString().padLeft(4, '0')}",
-                          style: const TextStyle(
-                            fontSize: 11,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
-              /// ROLE
-              const Expanded(flex: 3, child: Text("Employee")),
-
-              /// STATUS
-              const Expanded(flex: 2, child: Text("Active")),
-
-              /// EMAIL
-              Expanded(flex: 3, child: Text(e.email ?? "-")),
-
-              /// PHONE
-              Expanded(flex: 3, child: Text(e.phone ?? "-")),
-
-              /// 🔥 ACTION BUTTON
-              Expanded(
-                flex: 2,
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      context.push(
-                        '/employee-details',
-                        extra: e.id,
-                      );
-                    },
-                    icon: const Icon(Icons.visibility, size: 16),
-                    label: const Text("View"),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF0C5D6B),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 8,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                  ),
-                ),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.02),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
               ),
             ],
+            border: Border.all(color: const Color(0xFFE5E7EB)),
           ),
-        );
-      }).toList(),
-    ],
-  ),
-)
+          child: Column(
+            children: [
+              const EmployeeTableHeader(),
+
+              if (employees.isEmpty)
+                const Padding(
+                  padding: EdgeInsets.all(40.0),
+                  child: Text(
+                    "No employees found.",
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ),
+
+              ...employees.map((e) {
+                return Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 14,
+                  ),
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(color: Color(0xFFF3F4F6)),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      /// NAME
+                      Expanded(
+                        flex: 4,
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 18,
+                              backgroundColor: const Color(0xFFF3F4F6),
+                              child: Text(
+                                (e.fullName != null && e.fullName!.isNotEmpty)
+                                    ? e.fullName![0]
+                                    : "?",
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  e.fullName ?? "N/A",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  "EMP-${e.id.toString().padLeft(4, '0')}",
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      /// ROLE
+                      const Expanded(flex: 3, child: Text("Employee")),
+
+                      /// STATUS
+                      const Expanded(flex: 2, child: Text("Active")),
+
+                      /// EMAIL
+                      Expanded(flex: 3, child: Text(e.email ?? "-")),
+
+                      /// PHONE
+                      Expanded(flex: 3, child: Text(e.phone ?? "-")),
+
+                      /// 🔥 ACTION BUTTON
+                      Expanded(
+                        flex: 2,
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              // Navigate using the path parameter
+                              context.push('/employee-details/${e.id}');
+                            },
+                            icon: const Icon(Icons.visibility, size: 16),
+                            label: const Text("View"),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF0C5D6B),
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 8,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
+            ],
+          ),
+        ),
       ],
     );
   }

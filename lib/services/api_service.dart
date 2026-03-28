@@ -243,16 +243,19 @@ static Future<SingleEmployeeModel> getEmployeeFullById(int id) async {
 }
 static Future<PersonalModel> getPersonal(int id) async {
   final token = await _getToken();
-
   final res = await http.get(
     Uri.parse("$baseUrl/api/employees/$id/personal"),
     headers: {"Authorization": "Bearer $token"},
   );
 
-  final json = jsonDecode(res.body);
-  return PersonalModel.fromJson(json);
+  final decoded = jsonDecode(res.body);
+  
+  // If backend accidentally sends a list, take the first item
+  if (decoded is List) {
+    return PersonalModel.fromJson(decoded.isNotEmpty ? decoded[0] : {});
+  }
+  return PersonalModel.fromJson(decoded);
 }
-
 static Future<void> savePersonal(int id, Map<String, dynamic> data) async {
   final token = await _getToken();
 
@@ -283,15 +286,23 @@ static Future<List<EmploymentModel>> getEmployment(int id) async {
       throw Exception("Failed to fetch employment");
     }
 
-    final List json = jsonDecode(res.body);
+    final decoded = jsonDecode(res.body);
 
-    return EmploymentModel.listFromJson(json);
+    /// 🔥 HANDLE BOTH CASES (List OR Object)
+    if (decoded is List) {
+      return decoded
+          .map((e) => EmploymentModel.fromJson(e))
+          .toList();
+    } else {
+      // backend sent {}
+      return [];
+    }
+
   } catch (e) {
     print("❌ EMPLOYMENT ERROR: $e");
     rethrow;
   }
 }
-
 static Future<void> addEmployment(int id, Map<String, dynamic> data) async {
   final token = await _getToken();
 
@@ -304,8 +315,10 @@ static Future<void> addEmployment(int id, Map<String, dynamic> data) async {
     body: jsonEncode(data),
   );
 
-  if (res.statusCode != 200) {
-    throw Exception("Failed to add employment");
+  // Change this check to allow 201
+  if (res.statusCode != 200 && res.statusCode != 201) {
+    print("❌ Server Error Body: ${res.body}"); // Log the actual server error
+    throw Exception("Failed to add employment: ${res.body}");
   }
 }
 static Future<void> updateEmployment(int jobId, Map<String, dynamic> data) async {
@@ -338,9 +351,10 @@ static Future<List<FamilyModel>> getFamily(int id) async {
       throw Exception("Failed to fetch family");
     }
 
-    final List json = jsonDecode(res.body);
+    final decoded = jsonDecode(res.body);
 
-    return FamilyModel.listFromJson(json);
+    return FamilyModel.listFromJson(decoded);
+
   } catch (e) {
     print("❌ FAMILY ERROR: $e");
     rethrow;
@@ -358,8 +372,10 @@ static Future<void> addFamily(int id, Map<String, dynamic> data) async {
     body: jsonEncode(data),
   );
 
-  if (res.statusCode != 200) {
-    throw Exception("Failed to add family");
+  // ✅ Fix: Allow 201 Created
+  if (res.statusCode != 200 && res.statusCode != 201) {
+    print("❌ ADD FAMILY ERROR: ${res.body}");
+    throw Exception("Failed to add family: ${res.body}");
   }
 }
 static Future<void> updateFamily(int id, Map<String, dynamic> data) async {
@@ -381,13 +397,20 @@ static Future<void> updateFamily(int id, Map<String, dynamic> data) async {
 
 static Future<ContactModel> getContact(int id) async {
   final token = await _getToken();
-
   final res = await http.get(
     Uri.parse("$baseUrl/api/employees/$id/contact"),
     headers: {"Authorization": "Bearer $token"},
   );
 
-  return ContactModel.fromJson(jsonDecode(res.body));
+  if (res.statusCode != 200) return ContactModel(); // Return empty model instead of crashing
+
+  final decoded = jsonDecode(res.body);
+  
+  if (decoded is List) {
+    return ContactModel.fromJson(decoded.isNotEmpty ? decoded[0] : {});
+  }
+  // If backend returns null or empty string, handle it
+  return ContactModel.fromJson(decoded ?? {});
 }
 static Future<void> saveContact(int id, Map<String, dynamic> data) async {
   final token = await _getToken();

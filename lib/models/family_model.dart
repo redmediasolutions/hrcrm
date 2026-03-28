@@ -13,15 +13,20 @@ class FamilyModel {
 
   factory FamilyModel.fromJson(Map<String, dynamic> json) {
     return FamilyModel(
-      id: json['id'],
-      name: json['name'],
-      relation: json['relation'],
-      age: json['age'],
+      id: json['id'] ?? 0,
+      name: json['name']?.toString(),
+      relation: json['relation']?.toString(),
+      age: json['age'] is int
+          ? json['age']
+          : int.tryParse(json['age']?.toString() ?? ''),
     );
   }
 
-  /// 🔥 Convert LIST
-  static List<FamilyModel> listFromJson(List<dynamic> jsonList) {
-    return jsonList.map((e) => FamilyModel.fromJson(e)).toList();
+  /// ✅ SAFE LIST PARSER
+  static List<FamilyModel> listFromJson(dynamic json) {
+    if (json is List) {
+      return json.map((e) => FamilyModel.fromJson(e)).toList();
+    }
+    return [];
   }
 }
