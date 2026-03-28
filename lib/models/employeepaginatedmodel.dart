@@ -1,26 +1,22 @@
 import 'package:red_hrcrm/models/employeemodel.dart';
+import 'package:red_hrcrm/models/paginationmodel.dart';
 
 class PaginatedEmployeeResponse {
-  final List<EmployeeFullModel> data;
-  final int total;
-  final int page;
-  final int totalPages;
+  final List<EmployeeModel> data;
+  final Pagination pagination;
 
   PaginatedEmployeeResponse({
     required this.data,
-    required this.total,
-    required this.page,
-    required this.totalPages,
+    required this.pagination,
   });
 
-  factory PaginatedEmployeeResponse.fromJson(Map<String, dynamic> json) {
+  factory PaginatedEmployeeResponse.fromJson(
+      Map<String, dynamic> json) {
     return PaginatedEmployeeResponse(
       data: (json['data'] as List)
-          .map((e) => EmployeeFullModel.fromJson(e))
+          .map((e) => EmployeeModel.fromJson(e))
           .toList(),
-      total: json['pagination']['total'],
-      page: json['pagination']['page'],
-      totalPages: json['pagination']['totalPages'],
+      pagination: Pagination.fromJson(json['pagination']),
     );
   }
 }

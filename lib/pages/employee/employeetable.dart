@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:red_hrcrm/pages/employee/EmployeeDetailScreen.dart';
 import 'package:red_hrcrm/component/createPayroll.dart';
 
-import 'package:red_hrcrm/component/employeeinfo.dart';
+import 'package:red_hrcrm/pages/employee/createEmployee.dart';
 import 'package:red_hrcrm/models/employeemodel.dart';
 import 'package:red_hrcrm/pages/employee/employee_tableheader.dart';
 import 'package:red_hrcrm/pages/employee/employee_tablerow.dart';
@@ -17,7 +17,7 @@ class EmployeeTable extends StatefulWidget {
 }
 
 class _EmployeeTableState extends State<EmployeeTable> {
-  List<EmployeeFullModel> employees = [];
+  List<EmployeeModel> employees = [];
   int currentPage = 1;
   bool hasMore = true;
   bool loading = true;
@@ -28,21 +28,36 @@ class _EmployeeTableState extends State<EmployeeTable> {
     fetchEmployees();
   }
 
-  Future<void> fetchEmployees() async {
-    try {
-      final res = await ApiService.getFullEmployees(page: currentPage);
-
-      setState(() {
-        employees.addAll(res.data);
-        currentPage++;
-        hasMore = currentPage <= res.totalPages;
-        loading = false;
-      });
-    } catch (e) {
-      debugPrint("Error fetching employees: $e");
-      setState(() => loading = false);
+  Future<void> fetchEmployees({bool isRefresh = false}) async {
+  try {
+    if (isRefresh) {
+      currentPage = 1;
+      employees.clear();
+      hasMore = true;
     }
+
+    if (!hasMore) return;
+
+    setState(() => loading = true);
+
+    final res = await ApiService.getEmployees(
+      page: currentPage,
+      limit: 10,
+    );
+
+    setState(() {
+      employees.addAll(res.data);
+
+      currentPage++;
+      hasMore = currentPage <= res.pagination.totalPages;
+
+      loading = false;
+    });
+  } catch (e) {
+    debugPrint("❌ Error fetching employees: $e");
+    setState(() => loading = false);
   }
+}
 
   // Update function where it's set to archive.
   Future<void> deleteEmployee(int id) async {
@@ -75,14 +90,6 @@ class _EmployeeTableState extends State<EmployeeTable> {
     }
   }
 
-  void openCreatePage() async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const CreateEmployeeFullPage()),
-    );
-    fetchEmployees();
-  }
-
   @override
   Widget build(BuildContext context) {
     if (loading) {
@@ -107,7 +114,7 @@ class _EmployeeTableState extends State<EmployeeTable> {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
               ),
               ElevatedButton.icon(
-                onPressed: openCreatePage,
+                onPressed: () => context.push("/create-employee"),
                 icon: const Icon(Icons.add, size: 18),
                 label: const Text("ADD EMPLOYEE"),
                 style: ElevatedButton.styleFrom(
@@ -152,18 +159,36 @@ class _EmployeeTableState extends State<EmployeeTable> {
                   ),
                 ),
               ...employees.map((e) {
-                return EmployeeTableRow(
+                 return EmployeeTableRow(
                   data: EmployeeRowData(
-                    id: e.id,
-                    name: e.name.isNotEmpty ? e.name : 'N/A',
-                    empId: "EMP-${e.id}",
-                    role: e.position ?? 'Staff',
+                    id: e.id, // ✅ FIXED
+                    name: (e.fullName != null && e.fullName!.isNotEmpty)
+                        ? e.fullName!
+                        : 'N/A',
+
+                    empId:
+                        "EMP-${e.id.toString().padLeft(4, '0')}", // ✅ better format
+
+                    role: 'Employee', // ✅ no position yet
+
                     status: 'Active',
-                    contact: e.email.isNotEmpty ? e.email : 'No Email',
-                    salary: e.salary ?? '-',
+
+                    email: (e.email != null && e.email!.isNotEmpty)
+                        ? e.email!
+                        : 'No Email',
+
+                    phone: (e.phone != null && e.phone!.isNotEmpty)
+                        ? e.phone!
+                        : 'No Phone',
+
+                    salary: '-', // ✅ not in current model
                   ),
+
                   onDelete: deleteEmployee,
-                  onTap: () {},
+
+                  onTap: () {
+                    context.push('/employees/${e.id}');
+                  },
                 );
               }),
             ],

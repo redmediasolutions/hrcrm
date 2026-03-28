@@ -1,7 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:red_hrcrm/models/Singleemployeemodel.dart';
+import 'package:red_hrcrm/models/contactmodel.dart';
 import 'package:red_hrcrm/models/employeepaginatedmodel.dart';
+import 'package:red_hrcrm/models/personalmodel.dart';
+import 'package:red_hrcrm/models/professionalmodel.dart';
 
 class ApiService {
   static const String baseUrl = "https://api.hr.rd-crm.in";
@@ -23,27 +27,6 @@ class ApiService {
   }
 
   // ================= EMPLOYEES =================
-
-static Future<List<dynamic>> getEmployees() async {
-  final token = await _getToken();
-
-  final res = await http.get(
-    Uri.parse("$baseUrl/api/employees"),
-    headers: {
-      "Authorization": "Bearer $token",
-    },
-  );
-
-  // 👇 ADD THESE 2 LINES HERE
-  print("GET EMPLOYEES STATUS: ${res.statusCode}");
-  print("GET EMPLOYEES BODY: ${res.body}");
-
-  if (res.statusCode != 200) {
-    throw Exception("Failed to fetch employees: ${res.body}");
-  }
-
-  return jsonDecode(res.body);
-}
 
 
 static Future<Map<String, dynamic>> createFullEmployee(
@@ -81,7 +64,84 @@ static Future<Map<String, dynamic>> createFullEmployee(
     }
   }
 
+// CREATE EMPLOYEE BASIC DETAILS. STEP 1
 
+// ================= CREATE EMPLOYEE (BASIC) =================
+
+static Future<Map<String, dynamic>> createEmployeeBasic(
+    Map<String, dynamic> data) async {
+  final token = await _getToken();
+
+  final res = await http.post(
+    Uri.parse("$baseUrl/api/employees/create"),
+    headers: {
+      "Authorization": "Bearer $token",
+      "Content-Type": "application/json",
+    },
+    body: jsonEncode(data),
+  );
+
+  // 🔍 Debug logs (same style as your project)
+  print("CREATE EMPLOYEE STATUS: ${res.statusCode}");
+  print("CREATE EMPLOYEE BODY: ${res.body}");
+
+  if (res.statusCode != 200 && res.statusCode != 201) {
+    throw Exception("Create employee failed: ${res.body}");
+  }
+
+  return jsonDecode(res.body);
+}
+
+
+// ========== FETCH EMPLOYEE DETAILS FROM EMPLOYEE TABLE FOR EMPLOYEE DASHBOARD ======
+static Future<PaginatedEmployeeResponse> getEmployees({
+  int page = 1,
+  int limit = 10,
+  String? search,
+}) async {
+  try {
+    print("🔄 Fetching Employees...");
+    print("➡️ Page: $page | Limit: $limit");
+
+    final token = await _getToken();
+
+    final queryParams = {
+      'page': page.toString(),
+      'limit': limit.toString(),
+      if (search != null && search.isNotEmpty) 'search': search,
+    };
+
+    final uri = Uri.parse("$baseUrl/api/employees")
+        .replace(queryParameters: queryParams);
+
+    print("🌐 Request URL: $uri");
+
+    final res = await http.get(
+      uri,
+      headers: {
+        "Authorization": "Bearer $token",
+      },
+    );
+
+    print("📡 STATUS CODE: ${res.statusCode}");
+    print("📦 RAW RESPONSE: ${res.body}");
+
+    if (res.statusCode != 200) {
+      throw Exception("Failed to fetch employees: ${res.body}");
+    }
+
+    final decoded = jsonDecode(res.body);
+
+    final response = PaginatedEmployeeResponse.fromJson(decoded);
+
+    print("🎯 Parsed Employees Count: ${response.data.length}");
+
+    return response;
+  } catch (e) {
+    print("🔥 ERROR in getEmployees: $e");
+    rethrow;
+  }
+}
 
 
 //employee details
@@ -137,21 +197,21 @@ static Future<List<Map<String, dynamic>>> getRealTimeActivity() async {
 
     return jsonDecode(res.body);
   }
-// ========== FETCH EMPLOYEE SQL VIEW DATA ======
-static Future<PaginatedEmployeeResponse> getFullEmployees({
-  int page = 1,
-  int limit = 10,
-}) async {
+
+
+// ================= SINGLE EMPLOYEE =================
+
+static Future<SingleEmployeeModel> getEmployeeFullById(int id) async {
   try {
-    print("🔄 Fetching Employees...");
-    print("➡️ Page: $page | Limit: $limit");
+    print("═══════════════════════════════════════");
+    print("🔍 FETCH EMPLOYEE START");
+    print("🆔 Employee ID: $id");
 
     final token = await _getToken();
 
-    print("🔑 Token fetched: ${token.substring(0, 20)}...");
+    final url = "$baseUrl/api/employees/full/$id"; // ✅ FIXED
 
-    final url = "$baseUrl/api/employees/full?page=$page&limit=$limit";
-    print("🌐 Request URL: $url");
+    print("🌐 REQUEST URL: $url");
 
     final res = await http.get(
       Uri.parse(url),
@@ -161,29 +221,56 @@ static Future<PaginatedEmployeeResponse> getFullEmployees({
     );
 
     print("📡 STATUS CODE: ${res.statusCode}");
-    print("📦 RAW RESPONSE: ${res.body}");
+    print("📦 RESPONSE: ${res.body}");
 
     if (res.statusCode != 200) {
-      print("❌ API ERROR: ${res.body}");
-      throw Exception("Failed to fetch full employees");
+      throw Exception("Failed to fetch employee: ${res.body}");
     }
 
-    final decoded = jsonDecode(res.body);
+    final json = jsonDecode(res.body);
 
-    print("✅ JSON DECODE SUCCESS");
-    print("📊 Total Records: ${decoded['pagination']?['total']}");
-    print("📄 Current Page: ${decoded['pagination']?['page']}");
-    print("📚 Total Pages: ${decoded['pagination']?['totalPages']}");
+    final employee = SingleEmployeeModel.fromJson(json);
 
-    final response = PaginatedEmployeeResponse.fromJson(decoded);
+    print("✅ FETCH SUCCESS: ${employee.fullName}");
 
-    print("🎯 Parsed Employees Count: ${response.data.length}");
-
-    return response;
+    return employee;
 
   } catch (e) {
-    print("🔥 ERROR in getFullEmployees: $e");
+    print("❌ FETCH ERROR: $e");
     rethrow;
   }
+}
+static Future<PersonalModel> getPersonal(int id) async {
+  final token = await _getToken();
+
+  final res = await http.get(
+    Uri.parse("$baseUrl/api/employees/$id/personal"),
+    headers: {"Authorization": "Bearer $token"},
+  );
+
+  final json = jsonDecode(res.body);
+  return PersonalModel.fromJson(json);
+}
+
+static Future<ProfessionalModel> getEmployment(int id) async {
+  final token = await _getToken();
+
+  final res = await http.get(
+    Uri.parse("$baseUrl/api/employees/$id/employment"),
+    headers: {"Authorization": "Bearer $token"},
+  );
+
+  return ProfessionalModel.fromJson(jsonDecode(res.body));
+}
+
+static Future<ContactModel> getContact(int id) async {
+  final token = await _getToken();
+
+  final res = await http.get(
+    Uri.parse("$baseUrl/api/employees/$id/contact"),
+    headers: {"Authorization": "Bearer $token"},
+  );
+
+  return ContactModel.fromJson(jsonDecode(res.body));
 }
 }

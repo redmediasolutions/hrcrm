@@ -104,42 +104,71 @@ class EmployeeTableRow extends StatelessWidget {
             Expanded(
               flex: 4,
               child: Text(
-                data.contact,
+                data.email,
                 style: const TextStyle(fontSize: 12, color: Colors.blueGrey),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
             Expanded(
-              flex: 2,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  IconButton(
-                    icon: const Icon(
-                      Icons.attach_money,
-                      color: Colors.black54,
-                      size: 20,
-                    ),
-                    tooltip: 'Create/Update Payroll',
-                    onPressed: () {
-                      context.push(
-                        '/createpayroll',
-                        extra: data.empId, // ✅ direct int
-                      );
-                    },
-                  ),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.delete_outline,
-                      color: Colors.redAccent,
-                      size: 20,
-                    ),
-                    tooltip: 'Delete',
-                    onPressed: () => onDelete(data.id),
-                  ),
-                ],
+              flex: 4,
+              child: Text(
+                data.phone,
+                style: const TextStyle(fontSize: 12, color: Colors.blueGrey),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
+            Expanded(
+  flex: 2,
+  child: Align(
+    alignment: Alignment.centerRight,
+    child: ElevatedButton.icon(
+   onPressed: () {
+  print("🟡 BUTTON CLICKED");
+
+  print("📦 RAW DATA ID: ${data.id}");
+  print("📦 TYPE OF ID: ${data.id.runtimeType}");
+
+  if (data.id != null) {
+    try {
+      final int empId = data.id;
+
+      print("✅ VALID ID: $empId");
+      print("🚀 NAVIGATING TO /employee-details");
+
+      context.push(
+        '/employee-details',
+        extra: empId,
+      );
+
+      print("➡️ PUSH CALLED SUCCESSFULLY");
+    } catch (e) {
+      print("❌ TYPE CAST ERROR: $e");
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Invalid employee ID type")),
+      );
+    }
+  } else {
+    print("❌ ID IS NULL");
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Invalid employee ID")),
+    );
+  }
+},
+      icon: const Icon(Icons.visibility, size: 16),
+      label: const Text("View"),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xFF0C5D6B),
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+    ),
+  ),
+),
           ],
         ),
       ),
@@ -149,14 +178,15 @@ class EmployeeTableRow extends StatelessWidget {
 
 class EmployeeRowData {
   final int id;
-  final String name, empId, role, status, contact, salary;
+  final String name, empId, role, status, email, phone, salary;
   const EmployeeRowData({
     required this.id,
     required this.name,
     required this.empId,
     required this.role,
     required this.status,
-    required this.contact,
+    required this.email,
+    required this.phone,
     required this.salary,
   });
 }
