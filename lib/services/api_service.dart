@@ -5,7 +5,8 @@ import 'package:red_hrcrm/models/Singleemployeemodel.dart';
 import 'package:red_hrcrm/models/contactmodel.dart';
 import 'package:red_hrcrm/models/employeepaginatedmodel.dart';
 import 'package:red_hrcrm/models/personalmodel.dart';
-import 'package:red_hrcrm/models/professionalmodel.dart';
+import 'package:red_hrcrm/models/employment_model.dart';
+import 'package:red_hrcrm/models/family_model.dart';
 
 class ApiService {
   static const String baseUrl = "https://api.hr.rd-crm.in";
@@ -252,15 +253,130 @@ static Future<PersonalModel> getPersonal(int id) async {
   return PersonalModel.fromJson(json);
 }
 
-static Future<ProfessionalModel> getEmployment(int id) async {
+static Future<void> savePersonal(int id, Map<String, dynamic> data) async {
   final token = await _getToken();
 
-  final res = await http.get(
-    Uri.parse("$baseUrl/api/employees/$id/employment"),
-    headers: {"Authorization": "Bearer $token"},
+  final res = await http.post(
+    Uri.parse("$baseUrl/api/employees/$id/personal"),
+    headers: {
+      "Authorization": "Bearer $token",
+      "Content-Type": "application/json",
+    },
+    body: jsonEncode(data),
   );
 
-  return ProfessionalModel.fromJson(jsonDecode(res.body));
+  if (res.statusCode != 200) {
+    throw Exception("Failed to save personal");
+  }
+}
+
+static Future<List<EmploymentModel>> getEmployment(int id) async {
+  try {
+    final token = await _getToken();
+
+    final res = await http.get(
+      Uri.parse("$baseUrl/api/employees/$id/employment"),
+      headers: {"Authorization": "Bearer $token"},
+    );
+
+    if (res.statusCode != 200) {
+      throw Exception("Failed to fetch employment");
+    }
+
+    final List json = jsonDecode(res.body);
+
+    return EmploymentModel.listFromJson(json);
+  } catch (e) {
+    print("❌ EMPLOYMENT ERROR: $e");
+    rethrow;
+  }
+}
+
+static Future<void> addEmployment(int id, Map<String, dynamic> data) async {
+  final token = await _getToken();
+
+  final res = await http.post(
+    Uri.parse("$baseUrl/api/employees/$id/employment"),
+    headers: {
+      "Authorization": "Bearer $token",
+      "Content-Type": "application/json",
+    },
+    body: jsonEncode(data),
+  );
+
+  if (res.statusCode != 200) {
+    throw Exception("Failed to add employment");
+  }
+}
+static Future<void> updateEmployment(int jobId, Map<String, dynamic> data) async {
+  final token = await _getToken();
+
+  final res = await http.put(
+    Uri.parse("$baseUrl/api/employment/$jobId"),
+    headers: {
+      "Authorization": "Bearer $token",
+      "Content-Type": "application/json",
+    },
+    body: jsonEncode(data),
+  );
+
+  if (res.statusCode != 200) {
+    throw Exception("Failed to update employment");
+  }
+}
+
+static Future<List<FamilyModel>> getFamily(int id) async {
+  try {
+    final token = await _getToken();
+
+    final res = await http.get(
+      Uri.parse("$baseUrl/api/employees/$id/family"),
+      headers: {"Authorization": "Bearer $token"},
+    );
+
+    if (res.statusCode != 200) {
+      throw Exception("Failed to fetch family");
+    }
+
+    final List json = jsonDecode(res.body);
+
+    return FamilyModel.listFromJson(json);
+  } catch (e) {
+    print("❌ FAMILY ERROR: $e");
+    rethrow;
+  }
+}
+static Future<void> addFamily(int id, Map<String, dynamic> data) async {
+  final token = await _getToken();
+
+  final res = await http.post(
+    Uri.parse("$baseUrl/api/employees/$id/family"),
+    headers: {
+      "Authorization": "Bearer $token",
+      "Content-Type": "application/json",
+    },
+    body: jsonEncode(data),
+  );
+
+  if (res.statusCode != 200) {
+    throw Exception("Failed to add family");
+  }
+}
+static Future<void> updateFamily(int id, Map<String, dynamic> data) async {
+  final token = await _getToken();
+
+  final res = await http.put(
+    Uri.parse("$baseUrl/api/family/$id"),
+    headers: {
+      "Authorization": "Bearer $token",
+      "Content-Type": "application/json",
+    },
+    body: jsonEncode(data),
+  );
+
+  if (res.statusCode != 200) {
+    throw Exception("Failed to update family");
+  }
 }
 
 static Future<ContactModel> getContact(int id) async {
@@ -273,4 +389,21 @@ static Future<ContactModel> getContact(int id) async {
 
   return ContactModel.fromJson(jsonDecode(res.body));
 }
+static Future<void> saveContact(int id, Map<String, dynamic> data) async {
+  final token = await _getToken();
+
+  final res = await http.post(
+    Uri.parse("$baseUrl/api/employees/$id/contact"),
+    headers: {
+      "Authorization": "Bearer $token",
+      "Content-Type": "application/json",
+    },
+    body: jsonEncode(data),
+  );
+
+  if (res.statusCode != 200) {
+    throw Exception("Failed to save contact");
+  }
+}
+
 }

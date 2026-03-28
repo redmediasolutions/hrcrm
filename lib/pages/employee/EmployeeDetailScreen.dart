@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:red_hrcrm/models/Singleemployeemodel.dart';
+import 'package:red_hrcrm/models/contactmodel.dart';
+import 'package:red_hrcrm/models/employment_model.dart';
+import 'package:red_hrcrm/models/family_model.dart';
+import 'package:red_hrcrm/models/personalmodel.dart';
 import '../../services/api_service.dart';
 
 class EmployeeDetailScreen extends StatefulWidget {
@@ -9,13 +13,18 @@ class EmployeeDetailScreen extends StatefulWidget {
   const EmployeeDetailScreen({super.key, required this.employeeId});
 
   @override
-  State<EmployeeDetailScreen> createState() =>
-      _EmployeeDetailScreenState();
+  State<EmployeeDetailScreen> createState() => _EmployeeDetailScreenState();
 }
 
 class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
   SingleEmployeeModel? employee;
   bool loading = true;
+
+  // 🔥 NEW MODELS DATA
+  PersonalModel? personal;
+  ContactModel? contact;
+  List<EmploymentModel> employments = [];
+  List<FamilyModel> family = [];
 
   /// 🔥 EDIT STATES
   bool isPersonalEditing = false;
@@ -45,32 +54,33 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
 
   Future<void> fetch() async {
     try {
-      final res =
-          await ApiService.getEmployeeFullById(widget.employeeId);
+      final emp = await ApiService.getEmployeeFullById(widget.employeeId);
+      final p = await ApiService.getPersonal(widget.employeeId);
+      final c = await ApiService.getContact(widget.employeeId);
+      final jobs = await ApiService.getEmployment(widget.employeeId);
+      final fam = await ApiService.getFamily(widget.employeeId);
 
       if (!mounted) return;
 
-      /// 🔥 INIT CONTROLLERS
-      nameCtrl = TextEditingController(text: res.fullName);
-      dobCtrl = TextEditingController(text: res.dob);
-      genderCtrl = TextEditingController(text: res.gender);
+      // 🔥 CONTROLLERS
+      nameCtrl = TextEditingController(text: p.fullName ?? "");
+      dobCtrl = TextEditingController(text: p.dob ?? "");
+      genderCtrl = TextEditingController(text: p.gender ?? "");
 
-      roleCtrl = TextEditingController(text: res.positionHeld);
-      companyCtrl = TextEditingController(text: res.employerName);
-      salaryCtrl = TextEditingController(text: res.salaryDrawn);
-
-      emailCtrl = TextEditingController(text: res.email);
-      phoneCtrl = TextEditingController(text: res.phone);
-      addressCtrl =
-          TextEditingController(text: res.correspondenceAddress);
+      emailCtrl = TextEditingController(text: c.email ?? "");
+      phoneCtrl = TextEditingController(text: c.phone ?? "");
+      addressCtrl = TextEditingController(text: c.address ?? "");
 
       setState(() {
-        employee = res;
+        employee = emp;
+        personal = p;
+        contact = c;
+        employments = jobs;
+        family = fam;
         loading = false;
       });
     } catch (e) {
-      debugPrint("DETAIL ERROR: $e");
-      if (!mounted) return;
+      print("❌ FETCH ERROR: $e");
       setState(() => loading = false);
     }
   }
@@ -78,9 +88,7 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
   @override
   Widget build(BuildContext context) {
     if (loading || employee == null) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     final d = employee!;
@@ -105,7 +113,6 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
         padding: const EdgeInsets.all(24),
         child: Column(
           children: [
-
             /// 🔥 HERO HEADER
             _heroHeader(d),
 
@@ -117,9 +124,13 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
               isEditing: isPersonalEditing,
               onEdit: () => setState(() => isPersonalEditing = true),
               onCancel: () => setState(() => isPersonalEditing = false),
-              onUpdate: () {
-                print("UPDATE PERSONAL");
-                print(nameCtrl.text);
+              onUpdate: () async {
+                await ApiService.savePersonal(widget.employeeId, {
+                  "full_name": nameCtrl.text,
+                  "dob": dobCtrl.text,
+                  "gender": genderCtrl.text,
+                });
+
                 setState(() => isPersonalEditing = false);
               },
               children: [
@@ -130,22 +141,109 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
             ),
 
             _sectionCard(
-              title: "Professional Details",
-              icon: Icons.badge,
-              isEditing: isProfessionalEditing,
-              onEdit: () => setState(() => isProfessionalEditing = true),
-              onCancel: () =>
-                  setState(() => isProfessionalEditing = false),
-              onUpdate: () {
-                print("UPDATE PROFESSIONAL");
-                setState(() => isProfessionalEditing = false);
-              },
+              title: "Employment History",
+              icon: Icons.work,
+              isEditing: false,
+              onEdit: () {},
+              onCancel: () {},
+              onUpdate: () {},
               children: [
-                _editableField("Role", roleCtrl, isProfessionalEditing),
-                _editableField(
-                    "Company", companyCtrl, isProfessionalEditing),
-                _editableField(
-                    "Salary", salaryCtrl, isProfessionalEditing),
+                ...employments.map(
+                  (job) => Container(
+                    width: 250,
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[50],
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          job.employerName ?? "",
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Text(job.positionHeld ?? ""),
+                        Text("₹ ${job.salaryDrawn ?? ""}"),
+                      ],
+                    ),
+                  ),
+                ),
+
+                /// ➕ ADD BUTTON
+                GestureDetector(
+                  onTap: () async {
+                    await ApiService.addEmployment(widget.employeeId, {
+                      "employer_name": "New Company",
+                      "position_held": "Role",
+                      "salary_drawn": "0",
+                    });
+
+                    fetch(); // refresh
+                  },
+                  child: Container(
+                    width: 250,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Center(child: Text("+ Add Job")),
+                  ),
+                ),
+              ],
+            ),
+
+            _sectionCard(
+              title: "Family Details",
+              icon: Icons.family_restroom,
+              isEditing: false,
+              onEdit: () {},
+              onCancel: () {},
+              onUpdate: () {},
+              children: [
+                ...family.map(
+                  (f) => Container(
+                    width: 250,
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[50],
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          f.name ?? "",
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Text(f.relation ?? ""),
+                        Text("Age: ${f.age ?? "-"}"),
+                      ],
+                    ),
+                  ),
+                ),
+
+                GestureDetector(
+                  onTap: () async {
+                    await ApiService.addFamily(widget.employeeId, {
+                      "name": "New Member",
+                      "relation": "Relation",
+                      "age": 0,
+                    });
+
+                    fetch();
+                  },
+                  child: Container(
+                    width: 250,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Center(child: Text("+ Add Family")),
+                  ),
+                ),
               ],
             ),
 
@@ -154,17 +252,20 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
               icon: Icons.contact_page,
               isEditing: isContactEditing,
               onEdit: () => setState(() => isContactEditing = true),
-              onCancel: () =>
-                  setState(() => isContactEditing = false),
-              onUpdate: () {
-                print("UPDATE CONTACT");
+              onCancel: () => setState(() => isContactEditing = false),
+              onUpdate: () async {
+                await ApiService.saveContact(widget.employeeId, {
+                  "email": emailCtrl.text,
+                  "phone": phoneCtrl.text,
+                  "correspondence_address": addressCtrl.text,
+                });
+
                 setState(() => isContactEditing = false);
               },
               children: [
                 _editableField("Email", emailCtrl, isContactEditing),
                 _editableField("Phone", phoneCtrl, isContactEditing),
-                _editableField(
-                    "Address", addressCtrl, isContactEditing),
+                _editableField("Address", addressCtrl, isContactEditing),
               ],
             ),
           ],
@@ -195,13 +296,19 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(d.fullName,
-                  style: const TextStyle(
-                      fontSize: 22, fontWeight: FontWeight.bold)),
-              Text(d.positionHeld ?? "",
-                  style: const TextStyle(color: Colors.grey)),
+              Text(
+                d.fullName,
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                d.positionHeld ?? "",
+                style: const TextStyle(color: Colors.grey),
+              ),
             ],
-          )
+          ),
         ],
       ),
     );
@@ -226,7 +333,6 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
       ),
       child: Column(
         children: [
-
           /// HEADER
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -235,9 +341,10 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
                 children: [
                   Icon(icon),
                   const SizedBox(width: 10),
-                  Text(title,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold)),
+                  Text(
+                    title,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 ],
               ),
 
@@ -247,23 +354,22 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
                     TextButton(onPressed: onEdit, child: const Text("Edit")),
                   if (isEditing) ...[
                     TextButton(
-                        onPressed: onCancel, child: const Text("Cancel")),
+                      onPressed: onCancel,
+                      child: const Text("Cancel"),
+                    ),
                     ElevatedButton(
-                        onPressed: onUpdate,
-                        child: const Text("Update")),
-                  ]
+                      onPressed: onUpdate,
+                      child: const Text("Update"),
+                    ),
+                  ],
                 ],
-              )
+              ),
             ],
           ),
 
           const SizedBox(height: 16),
 
-          Wrap(
-            spacing: 40,
-            runSpacing: 20,
-            children: children,
-          )
+          Wrap(spacing: 40, runSpacing: 20, children: children),
         ],
       ),
     );
@@ -271,14 +377,19 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
 
   /// 🔥 EDIT FIELD
   Widget _editableField(
-      String label, TextEditingController controller, bool isEditing) {
+    String label,
+    TextEditingController controller,
+    bool isEditing,
+  ) {
     return SizedBox(
       width: 200,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label.toUpperCase(),
-              style: const TextStyle(fontSize: 10, color: Colors.grey)),
+          Text(
+            label.toUpperCase(),
+            style: const TextStyle(fontSize: 10, color: Colors.grey),
+          ),
           const SizedBox(height: 6),
 
           isEditing
@@ -289,104 +400,108 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
                     isDense: true,
                   ),
                 )
-              : Text(controller.text,
-                  style: const TextStyle(fontWeight: FontWeight.bold)),
+              : Text(
+                  controller.text,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
         ],
       ),
     );
   }
 
-Widget _rightPanel() {
-  return Column(
-    children: [
-
-      /// GLASS CARD
-      Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.8),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            Text("HR Context",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            SizedBox(height: 10),
-            Text(
-              "This profile is verified and active in the workforce database.",
-              style: TextStyle(fontSize: 12, color: Colors.grey),
-            ),
-            SizedBox(height: 16),
-            Row(
-              children: [
-                Icon(Icons.check_circle, color: Colors.green),
-                SizedBox(width: 8),
-                Text("Verified & Active"),
-              ],
-            )
-          ],
-        ),
-      ),
-
-      const SizedBox(height: 16),
-
-      /// ACTIONS
-      Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Column(
-          children: const [
-            ListTile(
-              leading: Icon(Icons.lock),
-              title: Text("Reset Credentials"),
-            ),
-            ListTile(
-              leading: Icon(Icons.edit),
-              title: Text("Update Role"),
-            ),
-            ListTile(
-              leading: Icon(Icons.delete, color: Colors.red),
-              title: Text("Deactivate Employee",
-                  style: TextStyle(color: Colors.red)),
-            ),
-          ],
-        ),
-      )
-    ],
-  );
-}
-
-Widget _iconText(IconData icon, String? text) {
-  return Row(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      Icon(icon, size: 16, color: Colors.grey),
-      const SizedBox(width: 6),
-      Text(text ?? "-", style: const TextStyle(fontSize: 12)),
-    ],
-  );
-}
-
-
-Widget _gridItem(String label, dynamic value) {
-  return SizedBox(
-    width: 180,
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _rightPanel() {
+    return Column(
       children: [
-        Text(label.toUpperCase(),
-            style: const TextStyle(
-                fontSize: 10, color: Colors.grey, letterSpacing: 1)),
-        const SizedBox(height: 4),
-        Text(value?.toString() ?? "-",
-            style: const TextStyle(fontWeight: FontWeight.bold)),
-      ],
-    ),
-  );
-}
+        /// GLASS CARD
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.8),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              Text("HR Context", style: TextStyle(fontWeight: FontWeight.bold)),
+              SizedBox(height: 10),
+              Text(
+                "This profile is verified and active in the workforce database.",
+                style: TextStyle(fontSize: 12, color: Colors.grey),
+              ),
+              SizedBox(height: 16),
+              Row(
+                children: [
+                  Icon(Icons.check_circle, color: Colors.green),
+                  SizedBox(width: 8),
+                  Text("Verified & Active"),
+                ],
+              ),
+            ],
+          ),
+        ),
 
+        const SizedBox(height: 16),
+
+        /// ACTIONS
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            children: const [
+              ListTile(
+                leading: Icon(Icons.lock),
+                title: Text("Reset Credentials"),
+              ),
+              ListTile(leading: Icon(Icons.edit), title: Text("Update Role")),
+              ListTile(
+                leading: Icon(Icons.delete, color: Colors.red),
+                title: Text(
+                  "Deactivate Employee",
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _iconText(IconData icon, String? text) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 16, color: Colors.grey),
+        const SizedBox(width: 6),
+        Text(text ?? "-", style: const TextStyle(fontSize: 12)),
+      ],
+    );
+  }
+
+  Widget _gridItem(String label, dynamic value) {
+    return SizedBox(
+      width: 180,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label.toUpperCase(),
+            style: const TextStyle(
+              fontSize: 10,
+              color: Colors.grey,
+              letterSpacing: 1,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value?.toString() ?? "-",
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+    );
+  }
 }

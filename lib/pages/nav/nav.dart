@@ -65,16 +65,23 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           path: '/employee-details',
           builder: (context, state) {
+            final id = state.extra as int;
+            return EmployeeDetailScreen(employeeId: id);
+          },
+        ),
+        GoRoute(
+          path: '/employee-details',
+          builder: (context, state) {
             final employeeId = state.extra as int;
 
             return EmployeeDetailScreen(employeeId: employeeId);
           },
         ),
-         GoRoute(
-      path: '/create-employee',
-      name: 'createEmployee',
-      builder: (context, state) => const CreateEmployeeFullPage(),
-    ),
+        GoRoute(
+          path: '/create-employee',
+          name: 'createEmployee',
+          builder: (context, state) => const CreateEmployeeFullPage(),
+        ),
       ],
     ),
   ],
