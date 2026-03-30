@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:red_hrcrm/models/Singleemployeemodel.dart';
 import 'package:red_hrcrm/models/contactmodel.dart';
+import 'package:red_hrcrm/models/deparment.dart';
 import 'package:red_hrcrm/models/employeepaginatedmodel.dart';
 import 'package:red_hrcrm/models/personalmodel.dart';
 import 'package:red_hrcrm/models/employment_model.dart';
@@ -259,6 +260,8 @@ static Future<PersonalModel> getPersonal(int id) async {
 static Future<void> savePersonal(int id, Map<String, dynamic> data) async {
   final token = await _getToken();
 
+  print("📤 Saving Personal Data: $data");
+
   final res = await http.post(
     Uri.parse("$baseUrl/api/employees/$id/personal"),
     headers: {
@@ -268,8 +271,11 @@ static Future<void> savePersonal(int id, Map<String, dynamic> data) async {
     body: jsonEncode(data),
   );
 
+  print("📥 Status: ${res.statusCode}");
+  print("📦 Response: ${res.body}");
+
   if (res.statusCode != 200) {
-    throw Exception("Failed to save personal");
+    throw Exception("Failed to save personal: ${res.body}");
   }
 }
 
@@ -338,7 +344,7 @@ static Future<void> updateEmployment(int jobId, Map<String, dynamic> data) async
   }
 }
 
-static Future<List<FamilyModel>> getFamily(int id) async {
+static Future<FamilyModel?> getFamily(int id) async {
   try {
     final token = await _getToken();
 
@@ -353,7 +359,14 @@ static Future<List<FamilyModel>> getFamily(int id) async {
 
     final decoded = jsonDecode(res.body);
 
-    return FamilyModel.listFromJson(decoded);
+    print("📦 FAMILY RAW: $decoded");
+
+    // 🔥 IMPORTANT FIX
+    if (decoded == null || decoded.isEmpty) {
+      return null;
+    }
+
+    return FamilyModel.fromResponse(decoded);
 
   } catch (e) {
     print("❌ FAMILY ERROR: $e");
@@ -378,11 +391,11 @@ static Future<void> addFamily(int id, Map<String, dynamic> data) async {
     throw Exception("Failed to add family: ${res.body}");
   }
 }
-static Future<void> updateFamily(int id, Map<String, dynamic> data) async {
+static Future<void> saveFamily(int employeeId, Map<String, dynamic> data) async {
   final token = await _getToken();
 
-  final res = await http.put(
-    Uri.parse("$baseUrl/api/family/$id"),
+  final res = await http.post(
+    Uri.parse("$baseUrl/api/employees/$employeeId/family"),
     headers: {
       "Authorization": "Bearer $token",
       "Content-Type": "application/json",
@@ -391,7 +404,7 @@ static Future<void> updateFamily(int id, Map<String, dynamic> data) async {
   );
 
   if (res.statusCode != 200) {
-    throw Exception("Failed to update family");
+    throw Exception("Failed to save family");
   }
 }
 
@@ -426,6 +439,49 @@ static Future<void> saveContact(int id, Map<String, dynamic> data) async {
 
   if (res.statusCode != 200) {
     throw Exception("Failed to save contact");
+  }
+}
+
+// HR Departments
+static Future<List<DepartmentModel>> getDepartments() async {
+  try {
+    print("📡 [API] Fetching departments...");
+
+    final token = await _getToken();
+    print("🔐 Token fetched: ${token.substring(0, 10)}...");
+
+    final url = "$baseUrl/api/departments";
+    print("🌐 GET $url");
+
+    final res = await http.get(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+    );
+
+    print("📥 Response status: ${res.statusCode}");
+    print("📦 Raw response: ${res.body}");
+
+    if (res.statusCode == 200) {
+      final data = jsonDecode(res.body);
+
+      print("✅ Parsed JSON: $data");
+      print("📊 Total departments: ${data.length}");
+
+      final departments = DepartmentModel.fromList(data);
+
+      print("🎯 Mapped to model: ${departments.length} items");
+
+      return departments;
+    } else {
+      print("❌ API Error: ${res.statusCode}");
+      throw Exception("Failed to fetch departments");
+    }
+  } catch (e) {
+    print("🚨 Exception in getDepartments: $e");
+    rethrow;
   }
 }
 

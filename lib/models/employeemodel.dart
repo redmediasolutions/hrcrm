@@ -8,6 +8,9 @@ class EmployeeModel {
   final String? onboardingDate;
   final String? createdAt;
 
+  // 🔥 NEW FIELD
+  final int? department;
+
   EmployeeModel({
     required this.id,
     this.fullName,
@@ -17,6 +20,7 @@ class EmployeeModel {
     this.nationality,
     this.onboardingDate,
     this.createdAt,
+    this.department, // ✅ add
   });
 
   factory EmployeeModel.fromJson(Map<String, dynamic> json) {
@@ -29,6 +33,9 @@ class EmployeeModel {
       nationality: json['nationality'],
       onboardingDate: json['onboarding_date'],
       createdAt: json['created_at'],
+
+      // 🔥 IMPORTANT
+      department: json['department'],
     );
   }
 }

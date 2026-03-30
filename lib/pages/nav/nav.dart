@@ -6,9 +6,8 @@ import 'package:red_hrcrm/auth/login.dart';
 import 'package:red_hrcrm/component/createPayroll.dart';
 import 'package:red_hrcrm/pages/employee/createEmployee.dart';
 import 'package:red_hrcrm/pages/attendance/attendance.dart';
-import 'package:red_hrcrm/pages/employee/EmployeeDetailScreen.dart';
+import 'package:red_hrcrm/pages/employeedetails/EmployeeDetailScreen.dart';
 import 'package:red_hrcrm/pages/employee/createEmployeesimple.dart';
-
 import 'package:red_hrcrm/pages/nav/shell.dart';
 import 'package:red_hrcrm/pages/payroll/payroll.dart';
 import 'package:red_hrcrm/pages/staff/staff_dashboard.dart';
@@ -30,63 +29,79 @@ final GoRouter appRouter = GoRouter(
 
     return null;
   },
-  routes: [
-    //  🔓 AUTH (NO SHELL)
-    GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
 
-    // 🔒 APP (SHELL ONCE)
+  routes: [
+    // 🔓 AUTH
+    GoRoute(
+      path: '/login',
+      builder: (context, state) => const LoginPage(),
+    ),
+
+    // 🔒 APP (SHELL)
     ShellRoute(
       builder: (context, state, child) {
         return ShellPage(child: child);
       },
       routes: [
-        GoRoute(path: '/', redirect: (_, _) => '/home'),
-        GoRoute(path: '/home', builder: (context, state) => Homepage()),
+        // Redirect root → home
+        GoRoute(path: '/', redirect: (_, __) => '/home'),
+
+        // 🏠 Dashboard
         GoRoute(
-          path: '/CreateEmployeePage',
+          path: '/home',
+          builder: (context, state) => Homepage(),
+        ),
+
+        // 👥 Employees
+        GoRoute(
+          path: '/employees/create',
           builder: (context, state) => const CreateEmployeeFullPage(),
         ),
-        GoRoute(path: '/Payroll', builder: (context, state) => const Payroll()),
         GoRoute(
-          path: '/Attendance',
-          builder: (context, state) => const Attendance(),
-        ),
-        GoRoute(path: '/Task', builder: (context, state) => const Task()),
-        GoRoute(
-          path: '/createpayroll',
-          builder: (context, state) {
-            final employeeId = int.parse(
-              state.uri.queryParameters['employeeId']!,
-            );
-
-            return CreateSalarySlipScreen(employeeId: employeeId);
-          },
+          path: '/employees/simple-create',
+          name: 'createEmployee',
+          builder: (context, state) => const CreateEmployeeSimplePage(),
         ),
         GoRoute(
-          path: '/employee-details',
-          builder: (context, state) {
-            final id = state.extra as int;
-            return EmployeeDetailScreen(employeeId: id);
-          },
-        ),
-        GoRoute(
-          path: '/employee-details/:id',
+          path: '/employees/:id',
           builder: (context, state) {
             final id = int.parse(state.pathParameters['id']!);
             return EmployeeDetailScreen(employeeId: id);
           },
         ),
+
+        // 💰 Payroll
         GoRoute(
-          path: '/create-employee',
-          name: 'createEmployee',
-          builder: (context, state) => const CreateEmployeeFullPage(),
+          path: '/payroll',
+          builder: (context, state) => const Payroll(),
+        ),
+        GoRoute(
+          path: '/payroll/create',
+          builder: (context, state) {
+            final employeeId = int.parse(
+              state.uri.queryParameters['employeeId']!,
+            );
+            return CreateSalarySlipScreen(employeeId: employeeId);
+          },
+        ),
+
+        // 📅 Attendance
+        GoRoute(
+          path: '/attendance',
+          builder: (context, state) => const Attendance(),
+        ),
+
+        // ✅ Tasks
+        GoRoute(
+          path: '/tasks',
+          builder: (context, state) => const Task(),
         ),
       ],
     ),
   ],
 );
 
-/// 🔁 Forces GoRouter to refresh when Supabase auth changes
+/// 🔁 Forces GoRouter to refresh when auth changes
 class GoRouterRefreshStream extends ChangeNotifier {
   GoRouterRefreshStream(Stream<dynamic> stream) {
     _subscription = stream.listen((_) => notifyListeners());

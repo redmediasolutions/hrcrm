@@ -17,7 +17,6 @@ class EmployeeTableHeader extends StatelessWidget {
           _HeaderCell(text: 'EMPLOYEE', flex: 4),
           _HeaderCell(text: 'POSITION', flex: 3),
           _HeaderCell(text: 'STATUS', flex: 2),
-          _HeaderCell(text: 'SALARY', flex: 2),
           _HeaderCell(text: 'EMAIL', flex: 4),
           _HeaderCell(text: 'PHONE', flex: 4),
           _HeaderCell(text: 'ACTIONS', flex: 2, alignEnd: true),
