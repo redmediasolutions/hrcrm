@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:red_hrcrm/models/employeemodel.dart';
-import 'package:red_hrcrm/pages/employeedetails/EmployeeDetailScreen.dart';
+
 import 'package:red_hrcrm/pages/employee/employee_tableheader.dart';
 import '../../services/api_service.dart';
-import 'package:red_hrcrm/component/choicechip.dart';
 import 'package:red_hrcrm/component/kpiboxes.dart';
 
 class EmployeeTable extends StatefulWidget {

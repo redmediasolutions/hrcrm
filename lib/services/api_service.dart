@@ -5,9 +5,11 @@ import 'package:red_hrcrm/models/Singleemployeemodel.dart';
 import 'package:red_hrcrm/models/contactmodel.dart';
 import 'package:red_hrcrm/models/deparment.dart';
 import 'package:red_hrcrm/models/employeepaginatedmodel.dart';
+import 'package:red_hrcrm/models/office_use_model.dart';
 import 'package:red_hrcrm/models/personalmodel.dart';
 import 'package:red_hrcrm/models/employment_model.dart';
 import 'package:red_hrcrm/models/family_model.dart';
+import 'package:red_hrcrm/models/remuneration_model.dart';
 
 class ApiService {
   static const String baseUrl = "https://api.hr.rd-crm.in";
@@ -485,4 +487,75 @@ static Future<List<DepartmentModel>> getDepartments() async {
   }
 }
 
+static Future<RemunerationModel?> getRemuneration(int employeeId) async {
+  final token = await _getToken();
+
+  final res = await http.get(
+    Uri.parse("$baseUrl/api/remuneration/$employeeId"),
+    headers: {"Authorization": "Bearer $token"},
+  );
+
+  if (res.statusCode != 200) {
+    throw Exception("Failed to fetch remuneration");
+  }
+
+  final data = jsonDecode(res.body);
+
+  if (data == null) return null;
+
+  return RemunerationModel.fromJson(data);
+}
+
+static Future<void> saveRemuneration(RemunerationModel model) async {
+  final token = await _getToken();
+
+  final res = await http.post(
+    Uri.parse("$baseUrl/api/remuneration"),
+    headers: {
+      "Authorization": "Bearer $token",
+      "Content-Type": "application/json",
+    },
+    body: jsonEncode(model.toJson()),
+  );
+
+  if (res.statusCode != 200) {
+    throw Exception("Failed to save remuneration");
+  }
+}
+
+
+//oficce use
+
+static Future<OfficeUseModel?> getOfficeUse(int employeeId) async {
+  final token = await _getToken();
+
+  final res = await http.get(
+    Uri.parse("$baseUrl/api/office-use/$employeeId"),
+    headers: {"Authorization": "Bearer $token"},
+  );
+
+  if (res.statusCode != 200) throw Exception("Fetch failed");
+
+  final data = jsonDecode(res.body);
+  if (data == null) return null;
+
+  return OfficeUseModel.fromJson(data);
+}
+
+static Future<void> saveOfficeUse(OfficeUseModel model) async {
+  final token = await _getToken();
+
+  final res = await http.post(
+    Uri.parse("$baseUrl/api/office-use"),
+    headers: {
+      "Authorization": "Bearer $token",
+      "Content-Type": "application/json",
+    },
+    body: jsonEncode(model.toJson()),
+  );
+
+  if (res.statusCode != 200) {
+    throw Exception("Save failed: ${res.body}");
+  }
+}
 }
