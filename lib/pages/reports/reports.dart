@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:red_hrcrm/component/task_kpibox.dart';
 import 'package:red_hrcrm/component/tasktable.dart';
 
-class Task extends StatefulWidget {
-  const Task({super.key});
+class Reports extends StatefulWidget {
+  const Reports({super.key});
 
   @override
-  State<Task> createState() => _TaskState();
+  State<Reports> createState() => _ReportsState();
 }
 
-class _TaskState extends State<Task> {
+class _ReportsState extends State<Reports> {
 
   final List<Map<String, dynamic>> mySubmissions = [
   {
@@ -90,7 +90,7 @@ class _TaskState extends State<Task> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Task Oversight Dashboard",
+                    "Report Oversight Dashboard",
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: Colors.black,
                       fontSize: 30,
@@ -120,7 +120,7 @@ class _TaskState extends State<Task> {
                     flex: 1 ,
                     child:                   
                   TaskKpibox(
-                    heading: 'Total Tasks',
+                    heading: 'Total Reports',
                    total: '1,284')),
                       SizedBox(width: 15,),
                    Expanded(

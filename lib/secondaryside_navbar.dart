@@ -2,10 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 
-class SecondarysideNavbar extends StatelessWidget {
+class SecondarysideNavbar extends StatefulWidget {
   const SecondarysideNavbar({super.key});
 
-  Widget _item(
+  @override
+  State<SecondarysideNavbar> createState() => _SecondarysideNavbarState();
+}
+
+class _SecondarysideNavbarState extends State<SecondarysideNavbar> {
+  String? _optimisticRoute;
+
+  Widget item(
     BuildContext context, {
     required String route,
     required IconData icon,
@@ -16,10 +23,34 @@ class SecondarysideNavbar extends StatelessWidget {
       context,
     ).routerDelegate.currentConfiguration.uri.path;
 
-    final isSelected = currentPath == route;
+    final normalizedCurrent = currentPath.toLowerCase();
+    final normalizedRoute = route.toLowerCase();
+    final isSelectedByRoute =
+        normalizedCurrent == normalizedRoute ||
+        normalizedCurrent.startsWith('$normalizedRoute/');
+    final isSelectedByOptimistic =
+        _optimisticRoute?.toLowerCase() == normalizedRoute;
+    final isSelected = _optimisticRoute != null
+        ? isSelectedByOptimistic
+        : isSelectedByRoute;
 
     return InkWell(
-      onTap: () => context.go(route),
+      onTapDown: (_) {
+        if (_optimisticRoute != route) {
+          setState(() => _optimisticRoute = route);
+        }
+      },
+      onTapCancel: () {
+        if (_optimisticRoute != null) {
+          setState(() => _optimisticRoute = null);
+        }
+      },
+      onTap: () {
+        if (_optimisticRoute != route) {
+          setState(() => _optimisticRoute = route);
+        }
+        context.go(route);
+      },
       borderRadius: BorderRadius.circular(12),
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 4, horizontal:5),
@@ -78,6 +109,19 @@ class SecondarysideNavbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentPath = GoRouter.of(
+      context,
+    ).routerDelegate.currentConfiguration.uri.path;
+    if (_optimisticRoute != null) {
+      final normalizedCurrent = currentPath.toLowerCase();
+      final normalizedOptimistic = _optimisticRoute!.toLowerCase();
+      final matchesOptimistic =
+          normalizedCurrent == normalizedOptimistic ||
+          normalizedCurrent.startsWith('$normalizedOptimistic/');
+      if (matchesOptimistic) {
+        _optimisticRoute = null;
+      }
+    }
     return Container(
       width: 10,
       padding: EdgeInsets.all(25),
@@ -114,29 +158,29 @@ class SecondarysideNavbar extends StatelessWidget {
           ),
 
           // 🔹 Navigation Items
-           _item(
+          item(
             context,
             route: '/home',
             icon: Icons.home,
             label: "Staff",
           ),
-          _item(
+          item(
             context,
-            route: '/Payroll',
+            route: '/payroll',
             icon: Icons.payment,
             label: "Payroll",
           ),
-            _item(
+            item(
             context,
-            route: '/Attendance',
+            route: '/attendance',
             icon: Icons.calendar_today,
             label: "Attendance",
           ),
-            _item(
+            item(
             context,
-            route: '/Task',
+            route: '/reports',
             icon: Icons.task,
-            label: "Task",
+            label: "Reports",
           ),
           SizedBox(height: 15,),
         
@@ -149,15 +193,15 @@ Divider(
   color: Colors.white,
   
 ),
-             _item(
+             item(
             context,
             route: '/settings',
             icon: Icons.settings,
             label: "Settings",
           ),
-           _item(
+           item(
             context,
-            route: '/Support',
+            route: '/support',
             icon: Icons.support_agent,
             label: "Support",
           ),
