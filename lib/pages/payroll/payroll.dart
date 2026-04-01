@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:red_hrcrm/component/payroll_kpiboxes.dart';
-import 'package:red_hrcrm/component/payrolltable.dart';
-import 'package:red_hrcrm/pages/payroll/loantable.dart';
-import 'package:red_hrcrm/pages/payroll/profileoutstanding.dart';
+//import 'package:red_hrcrm/component/payrolltable.dart';
+import 'package:red_hrcrm/pages/payroll/widgets/loantable.dart';
+import 'package:red_hrcrm/pages/payroll/widgets/profileoutstanding.dart';
+import 'package:go_router/go_router.dart';
 
 class Payroll extends StatefulWidget {
   const Payroll({super.key});
@@ -103,7 +104,7 @@ class _PayrollState extends State<Payroll> {
 
     // Right Side: Add Loan Button
     ElevatedButton.icon(
-      onPressed: () {},
+      onPressed: () => context.go('/payroll/add-loan'),
       icon: const Icon(Icons.add, size: 18),
       label: const Text("Add Loan"),
       style: ElevatedButton.styleFrom(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:red_hrcrm/pages/payroll/widgets/loan_history.dart';
-import 'package:red_hrcrm/pages/payroll/widgets/recent_deduction.dart';
+
 import 'package:red_hrcrm/pages/payroll/widgets/stat_card.dart';
 
 class PayrollDetails extends StatelessWidget {
@@ -361,85 +361,7 @@ class PayrollDetails extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 20),
-                  Expanded(
-                    flex: 1,
-                    child: Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(18),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x11000000),
-                            blurRadius: 12,
-                            offset: Offset(0, 6),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                'Recent Deductions',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge
-                                    ?.copyWith(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                              ),
-                              const Spacer(),
-                              Text(
-                                'View All',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelSmall
-                                    ?.copyWith(
-                                      color: const Color(0xFF0C5D6B),
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 14),
-                          const RecentDeductionTile(
-                            date: 'Feb 28, 2024',
-                            title: 'Monthly installment Feb',
-                            subtitle: '"Monthly installment Feb"',
-                            amount: '-\$1,250.00',
-                            tag: 'SALARY',
-                            icon: Icons.account_balance_wallet,
-                            iconBackground: Color(0xFFD9EEF2),
-                            tagColor: Color(0xFF4C8C86),
-                          ),
-                          const RecentDeductionTile(
-                            date: 'Feb 15, 2024',
-                            title: 'Partial early repayment',
-                            subtitle: '"Partial early repayment"',
-                            amount: '-\$5,000.00',
-                            tag: 'MANUAL',
-                            icon: Icons.person,
-                            iconBackground: Color(0xFFD6ECFF),
-                            tagColor: Color(0xFF2B6CB0),
-                          ),
-                          const RecentDeductionTile(
-                            date: 'Jan 31, 2024',
-                            title: 'Monthly installment Jan',
-                            subtitle: '"Monthly installment Jan"',
-                            amount: '-\$1,250.00',
-                            tag: 'SALARY',
-                            icon: Icons.account_balance_wallet,
-                            iconBackground: Color(0xFFD9EEF2),
-                            tagColor: Color(0xFF4C8C86),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                 
                 ],
               ),
             ],

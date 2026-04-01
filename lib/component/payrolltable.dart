@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class Payrolltable extends StatelessWidget {
   const Payrolltable({super.key});
@@ -53,109 +54,113 @@ class _PayrollRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x12000000),
-            blurRadius: 14,
-            offset: Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          const CircleAvatar(
-            radius: 22,
-            backgroundColor: Color(0xFFEFF3F6),
-            child: Icon(Icons.person, color: Color(0xFF2D3A4B)),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return InkWell(
+      onTap: () => context.go('/payroll/details'),
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x12000000),
+              blurRadius: 14,
+              offset: Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            const CircleAvatar(
+              radius: 22,
+              backgroundColor: Color(0xFFEFF3F6),
+              child: Icon(Icons.person, color: Color(0xFF2D3A4B)),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item.name,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF222B38),
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    '${item.role} · ID: ${item.id}',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Color(0xFF7B8794),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 10),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  item.name,
+                  item.monthLabel,
                   style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF222B38),
+                    fontSize: 12,
+                    color: Color(0xFF7B8794),
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  '${item.role} Â· ID: ${item.id}',
+                  item.period,
                   style: const TextStyle(
                     fontSize: 12,
                     color: Color(0xFF7B8794),
-                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ],
             ),
-          ),
-          const SizedBox(width: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                item.monthLabel,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Color(0xFF7B8794),
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                item.period,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Color(0xFF7B8794),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(width: 16),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                _formatAmount(item.amount),
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF1E2A37),
-                ),
-              ),
-              const SizedBox(height: 6),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: item.status == 'Processed'
-                      ? const Color(0xFFE5F5F1)
-                      : const Color(0xFFFFF3D6),
-                  borderRadius: BorderRadius.circular(999),
-                ),
-                child: Text(
-                  item.status,
-                  style: TextStyle(
-                    fontSize: 11,
+            const SizedBox(width: 16),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  _formatAmount(item.amount),
+                  style: const TextStyle(
+                    fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: item.status == 'Processed'
-                        ? const Color(0xFF1A9278)
-                        : const Color(0xFFB7791F),
+                    color: Color(0xFF1E2A37),
                   ),
                 ),
-              ),
-            ],
-          ),
-        ],
+                const SizedBox(height: 6),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: item.status == 'Processed'
+                        ? const Color(0xFFE5F5F1)
+                        : const Color(0xFFFFF3D6),
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(
+                    item.status,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: item.status == 'Processed'
+                          ? const Color(0xFF1A9278)
+                          : const Color(0xFFB7791F),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
