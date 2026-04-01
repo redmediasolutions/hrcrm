@@ -1119,8 +1119,9 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
                   onTap: () async {
                     DateTime initial = DateTime.now();
                     try {
-                      if (ctrl.text.isNotEmpty)
+                      if (ctrl.text.isNotEmpty) {
                         initial = DateTime.parse(ctrl.text);
+                      }
                     } catch (_) {}
                     final picked = await showDatePicker(
                       context: context,
