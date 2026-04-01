@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 
 class EmployeeTableHeader extends StatelessWidget {
-  const EmployeeTableHeader();
+  const EmployeeTableHeader({super.key});
 
   @override
   Widget build(BuildContext context) {

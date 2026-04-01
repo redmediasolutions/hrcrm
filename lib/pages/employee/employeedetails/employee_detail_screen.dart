@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:red_hrcrm/models/employment_model.dart';
+import 'package:red_hrcrm/pages/attendance/attendance.dart';
 import 'employee_detail_controller.dart';
 
 class EmployeeDetailScreen extends StatefulWidget {
@@ -91,13 +92,44 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
       onSave: _ctrl.savePersonal,
       children: [
         _dateField("Date of Birth", _ctrl.dobCtrl, _ctrl.isPersonalEditing),
-        _infoField("Mother Tongue", _ctrl.motherTongueCtrl, _ctrl.isPersonalEditing),
-        _infoField("Blood Group", _ctrl.bloodGroupCtrl, _ctrl.isPersonalEditing),
-        _infoField("Marital Status", _ctrl.maritalStatusCtrl, _ctrl.isPersonalEditing),
-        _infoField("Spouse Name", _ctrl.spouseNameCtrl, _ctrl.isPersonalEditing),
-        _infoField("Aadhaar No", _ctrl.aadhaarCtrl, _ctrl.isPersonalEditing, isFullWidth: true),
-        _infoField("PAN No", _ctrl.panCtrl, _ctrl.isPersonalEditing, isFullWidth: true),
-        _infoField("Disability Info", _ctrl.disabilityCtrl, _ctrl.isPersonalEditing, isFullWidth: true),
+        _infoField(
+          "Mother Tongue",
+          _ctrl.motherTongueCtrl,
+          _ctrl.isPersonalEditing,
+        ),
+        _infoField(
+          "Blood Group",
+          _ctrl.bloodGroupCtrl,
+          _ctrl.isPersonalEditing,
+        ),
+        _infoField(
+          "Marital Status",
+          _ctrl.maritalStatusCtrl,
+          _ctrl.isPersonalEditing,
+        ),
+        _infoField(
+          "Spouse Name",
+          _ctrl.spouseNameCtrl,
+          _ctrl.isPersonalEditing,
+        ),
+        _infoField(
+          "Aadhaar No",
+          _ctrl.aadhaarCtrl,
+          _ctrl.isPersonalEditing,
+          isFullWidth: true,
+        ),
+        _infoField(
+          "PAN No",
+          _ctrl.panCtrl,
+          _ctrl.isPersonalEditing,
+          isFullWidth: true,
+        ),
+        _infoField(
+          "Disability Info",
+          _ctrl.disabilityCtrl,
+          _ctrl.isPersonalEditing,
+          isFullWidth: true,
+        ),
       ],
     );
   }
@@ -111,11 +143,27 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
       onSave: _ctrl.saveFamily,
       children: [
         _infoField("Father Name", _ctrl.fatherNameCtrl, _ctrl.isFamilyEditing),
-        _infoField("Father Contact", _ctrl.fatherContactCtrl, _ctrl.isFamilyEditing),
+        _infoField(
+          "Father Contact",
+          _ctrl.fatherContactCtrl,
+          _ctrl.isFamilyEditing,
+        ),
         _infoField("Mother Name", _ctrl.motherNameCtrl, _ctrl.isFamilyEditing),
-        _infoField("Mother Contact", _ctrl.motherContactCtrl, _ctrl.isFamilyEditing),
-        _infoField("Spouse Name", _ctrl.spouseNameFamilyCtrl, _ctrl.isFamilyEditing),
-        _infoField("Spouse Contact", _ctrl.spouseContactCtrl, _ctrl.isFamilyEditing),
+        _infoField(
+          "Mother Contact",
+          _ctrl.motherContactCtrl,
+          _ctrl.isFamilyEditing,
+        ),
+        _infoField(
+          "Spouse Name",
+          _ctrl.spouseNameFamilyCtrl,
+          _ctrl.isFamilyEditing,
+        ),
+        _infoField(
+          "Spouse Contact",
+          _ctrl.spouseContactCtrl,
+          _ctrl.isFamilyEditing,
+        ),
       ],
     );
   }
@@ -128,9 +176,24 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
       onEdit: () => setState(() => _ctrl.isContactEditing = true),
       onSave: _ctrl.saveContact,
       children: [
-        _infoField("Work Email", _ctrl.emailCtrl, _ctrl.isContactEditing, isFullWidth: true),
-        _infoField("Phone Number", _ctrl.phoneCtrl, _ctrl.isContactEditing, isFullWidth: true),
-        _infoField("Residential Address", _ctrl.addressCtrl, _ctrl.isContactEditing, isFullWidth: true),
+        _infoField(
+          "Work Email",
+          _ctrl.emailCtrl,
+          _ctrl.isContactEditing,
+          isFullWidth: true,
+        ),
+        _infoField(
+          "Phone Number",
+          _ctrl.phoneCtrl,
+          _ctrl.isContactEditing,
+          isFullWidth: true,
+        ),
+        _infoField(
+          "Residential Address",
+          _ctrl.addressCtrl,
+          _ctrl.isContactEditing,
+          isFullWidth: true,
+        ),
       ],
     );
   }
@@ -154,10 +217,26 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _subHeader("EARNINGS"),
-                    _moneyField("Basic Pay", _ctrl.basicCtrl, _ctrl.isRemunerationEditing),
-                    _moneyField("HRA", _ctrl.hraCtrl, _ctrl.isRemunerationEditing),
-                    _moneyField("Overtime", _ctrl.overtimeCtrl, _ctrl.isRemunerationEditing),
-                    _moneyField("Bonus", _ctrl.bonusCtrl, _ctrl.isRemunerationEditing),
+                    _moneyField(
+                      "Basic Pay",
+                      _ctrl.basicCtrl,
+                      _ctrl.isRemunerationEditing,
+                    ),
+                    _moneyField(
+                      "HRA",
+                      _ctrl.hraCtrl,
+                      _ctrl.isRemunerationEditing,
+                    ),
+                    _moneyField(
+                      "Overtime",
+                      _ctrl.overtimeCtrl,
+                      _ctrl.isRemunerationEditing,
+                    ),
+                    _moneyField(
+                      "Bonus",
+                      _ctrl.bonusCtrl,
+                      _ctrl.isRemunerationEditing,
+                    ),
                   ],
                 ),
               ),
@@ -172,12 +251,42 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _subHeader("DEDUCTIONS"),
-                    _moneyField("Loans", _ctrl.loansCtrl, _ctrl.isRemunerationEditing, isDeduction: true),
-                    _moneyField("Advance Pay", _ctrl.advanceCtrl, _ctrl.isRemunerationEditing, isDeduction: true),
-                    _moneyField("LOP Days", _ctrl.lopCtrl, _ctrl.isRemunerationEditing, isDeduction: true),
-                    _moneyField("PF Contribution", _ctrl.pfCtrl, _ctrl.isRemunerationEditing, isDeduction: true),
-                    _moneyField("ESI", _ctrl.esiCtrl, _ctrl.isRemunerationEditing, isDeduction: true),
-                    _moneyField("Professional Tax", _ctrl.taxCtrl, _ctrl.isRemunerationEditing, isDeduction: true),
+                    _moneyField(
+                      "Loans",
+                      _ctrl.loansCtrl,
+                      _ctrl.isRemunerationEditing,
+                      isDeduction: true,
+                    ),
+                    _moneyField(
+                      "Advance Pay",
+                      _ctrl.advanceCtrl,
+                      _ctrl.isRemunerationEditing,
+                      isDeduction: true,
+                    ),
+                    _moneyField(
+                      "LOP Days",
+                      _ctrl.lopCtrl,
+                      _ctrl.isRemunerationEditing,
+                      isDeduction: true,
+                    ),
+                    _moneyField(
+                      "PF Contribution",
+                      _ctrl.pfCtrl,
+                      _ctrl.isRemunerationEditing,
+                      isDeduction: true,
+                    ),
+                    _moneyField(
+                      "ESI",
+                      _ctrl.esiCtrl,
+                      _ctrl.isRemunerationEditing,
+                      isDeduction: true,
+                    ),
+                    _moneyField(
+                      "Professional Tax",
+                      _ctrl.taxCtrl,
+                      _ctrl.isRemunerationEditing,
+                      isDeduction: true,
+                    ),
                   ],
                 ),
               ),
@@ -221,7 +330,11 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
           // ── Section Header ──────────────────────────────────────────────────
           Row(
             children: [
-              Icon(Icons.admin_panel_settings_outlined, size: 20, color: primaryTeal),
+              Icon(
+                Icons.admin_panel_settings_outlined,
+                size: 20,
+                color: primaryTeal,
+              ),
               const SizedBox(width: 12),
               const Text(
                 "For Office Use Only",
@@ -234,26 +347,44 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
           // ── Dates — three chips in one row ──────────────────────────────────
           Row(
             children: [
-              Expanded(child: _officeDateTile("Received Date", _ctrl.receivedDate,
-                  () => _ctrl.pickDate(context, (d) => _ctrl.receivedDate = d))),
+              Expanded(
+                child: _officeDateTile(
+                  "Received Date",
+                  _ctrl.receivedDate,
+                  () => _ctrl.pickDate(context, (d) => _ctrl.receivedDate = d),
+                ),
+              ),
               const SizedBox(width: 16),
-              Expanded(child: _officeDateTile("Checked Date", _ctrl.checkedDate,
-                  () => _ctrl.pickDate(context, (d) => _ctrl.checkedDate = d))),
+              Expanded(
+                child: _officeDateTile(
+                  "Checked Date",
+                  _ctrl.checkedDate,
+                  () => _ctrl.pickDate(context, (d) => _ctrl.checkedDate = d),
+                ),
+              ),
               const SizedBox(width: 16),
-              Expanded(child: _officeDateTile("Date of Joining", _ctrl.joiningDate,
-                  () => _ctrl.pickDate(context, (d) => _ctrl.joiningDate = d))),
+              Expanded(
+                child: _officeDateTile(
+                  "Date of Joining",
+                  _ctrl.joiningDate,
+                  () => _ctrl.pickDate(context, (d) => _ctrl.joiningDate = d),
+                ),
+              ),
             ],
           ),
 
           const SizedBox(height: 28),
 
           // ── Checklist ───────────────────────────────────────────────────────
-          Text("Checklist",
-              style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.grey.shade500,
-                  letterSpacing: 1.4)),
+          Text(
+            "Checklist",
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w800,
+              color: Colors.grey.shade500,
+              letterSpacing: 1.4,
+            ),
+          ),
           const SizedBox(height: 12),
 
           // Using Wrap so items reflow on narrow screens instead of overflowing
@@ -261,14 +392,46 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
             spacing: 0,
             runSpacing: 0,
             children: [
-              _checkItem("PAN Card", _ctrl.pan, (v) => setState(() => _ctrl.pan = v!)),
-              _checkItem("Aadhaar", _ctrl.aadhaar, (v) => setState(() => _ctrl.aadhaar = v!)),
-              _checkItem("Experience Certificate", _ctrl.experience, (v) => setState(() => _ctrl.experience = v!)),
-              _checkItem("Salary Proof", _ctrl.salary, (v) => setState(() => _ctrl.salary = v!)),
-              _checkItem("Educational Certificates", _ctrl.education, (v) => setState(() => _ctrl.education = v!)),
-              _checkItem("Bank Passbook", _ctrl.bank, (v) => setState(() => _ctrl.bank = v!)),
-              _checkItem("Recommendation Letter", _ctrl.recommendation, (v) => setState(() => _ctrl.recommendation = v!)),
-              _checkItem("Medical Certificate", _ctrl.medical, (v) => setState(() => _ctrl.medical = v!)),
+              _checkItem(
+                "PAN Card",
+                _ctrl.pan,
+                (v) => setState(() => _ctrl.pan = v!),
+              ),
+              _checkItem(
+                "Aadhaar",
+                _ctrl.aadhaar,
+                (v) => setState(() => _ctrl.aadhaar = v!),
+              ),
+              _checkItem(
+                "Experience Certificate",
+                _ctrl.experience,
+                (v) => setState(() => _ctrl.experience = v!),
+              ),
+              _checkItem(
+                "Salary Proof",
+                _ctrl.salary,
+                (v) => setState(() => _ctrl.salary = v!),
+              ),
+              _checkItem(
+                "Educational Certificates",
+                _ctrl.education,
+                (v) => setState(() => _ctrl.education = v!),
+              ),
+              _checkItem(
+                "Bank Passbook",
+                _ctrl.bank,
+                (v) => setState(() => _ctrl.bank = v!),
+              ),
+              _checkItem(
+                "Recommendation Letter",
+                _ctrl.recommendation,
+                (v) => setState(() => _ctrl.recommendation = v!),
+              ),
+              _checkItem(
+                "Medical Certificate",
+                _ctrl.medical,
+                (v) => setState(() => _ctrl.medical = v!),
+              ),
             ],
           ),
 
@@ -283,12 +446,15 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("HR Sign / Approval",
-                        style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.grey.shade500,
-                            letterSpacing: 1.4)),
+                    Text(
+                      "HR Sign / Approval",
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.grey.shade500,
+                        letterSpacing: 1.4,
+                      ),
+                    ),
                     const SizedBox(height: 8),
                     Row(
                       children: [
@@ -296,7 +462,8 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
                           child: RadioListTile<bool>(
                             value: true,
                             groupValue: _ctrl.approved,
-                            onChanged: (v) => setState(() => _ctrl.approved = true),
+                            onChanged: (v) =>
+                                setState(() => _ctrl.approved = true),
                             title: const Text("Approved"),
                             contentPadding: EdgeInsets.zero,
                             dense: true,
@@ -306,7 +473,8 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
                           child: RadioListTile<bool>(
                             value: false,
                             groupValue: _ctrl.approved,
-                            onChanged: (v) => setState(() => _ctrl.approved = false),
+                            onChanged: (v) =>
+                                setState(() => _ctrl.approved = false),
                             title: const Text("Not Approved"),
                             contentPadding: EdgeInsets.zero,
                             dense: true,
@@ -325,12 +493,15 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Employee ID Allotted",
-                        style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.grey.shade500,
-                            letterSpacing: 1.4)),
+                    Text(
+                      "Employee ID Allotted",
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.grey.shade500,
+                        letterSpacing: 1.4,
+                      ),
+                    ),
                     const SizedBox(height: 12),
                     TextField(
                       controller: _ctrl.empIdNumberCtrl,
@@ -338,7 +509,10 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
                         hintText: "e.g. EMP-0042",
                         border: OutlineInputBorder(),
                         isDense: true,
-                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 12,
+                        ),
                       ),
                     ),
                   ],
@@ -356,16 +530,27 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
               onPressed: _ctrl.isOfficeSaving ? null : _ctrl.saveOfficeUse,
               style: ElevatedButton.styleFrom(
                 backgroundColor: primaryTeal,
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 14,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
               child: _ctrl.isOfficeSaving
                   ? const SizedBox(
                       height: 18,
                       width: 18,
-                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
                     )
-                  : const Text("Save Office Section", style: TextStyle(color: Colors.white)),
+                  : const Text(
+                      "Save Office Section",
+                      style: TextStyle(color: Colors.white),
+                    ),
             ),
           ),
         ],
@@ -399,20 +584,36 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(children: [
-                Icon(icon, size: 20, color: primaryTeal),
-                const SizedBox(width: 12),
-                Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              ]),
+              Row(
+                children: [
+                  Icon(icon, size: 20, color: primaryTeal),
+                  const SizedBox(width: 12),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
               isEditing
                   ? TextButton(
                       onPressed: () async => await onSave(),
-                      child: const Text("Save Changes", style: TextStyle(fontWeight: FontWeight.bold)),
+                      child: const Text(
+                        "Save Changes",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     )
                   : OutlinedButton(
                       onPressed: onEdit,
-                      style: OutlinedButton.styleFrom(side: BorderSide(color: Colors.grey.shade300)),
-                      child: const Text("Edit", style: TextStyle(color: Colors.black)),
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      child: const Text(
+                        "Edit",
+                        style: TextStyle(color: Colors.black),
+                      ),
                     ),
             ],
           ),
@@ -445,11 +646,19 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(children: [
-                Icon(icon, size: 20, color: primaryTeal),
-                const SizedBox(width: 12),
-                Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              ]),
+              Row(
+                children: [
+                  Icon(icon, size: 20, color: primaryTeal),
+                  const SizedBox(width: 12),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
               IconButton(
                 onPressed: onAdd,
                 icon: const Icon(Icons.add_circle_outline, color: Colors.blue),
@@ -458,7 +667,7 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
           ),
           const Divider(height: 40),
           ...items.map(itemBuilder),
-          if (extraWidget != null) extraWidget,
+          ?extraWidget,
         ],
       ),
     );
@@ -482,8 +691,14 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
             radius: 45,
             backgroundColor: primaryTeal.withOpacity(0.1),
             child: Text(
-              _ctrl.employee!.fullName.isNotEmpty ? _ctrl.employee!.fullName[0] : "?",
-              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: primaryTeal),
+              _ctrl.employee!.fullName.isNotEmpty
+                  ? _ctrl.employee!.fullName[0]
+                  : "?",
+              style: TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: primaryTeal,
+              ),
             ),
           ),
           const SizedBox(width: 24),
@@ -491,11 +706,23 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text("ACTIVE EMPLOYEE",
-                    style: TextStyle(
-                        fontSize: 10, fontWeight: FontWeight.w800, color: Colors.teal, letterSpacing: 1.2)),
-                Text(_ctrl.employee!.fullName,
-                    style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w900, letterSpacing: -0.5)),
+                const Text(
+                  "ACTIVE EMPLOYEE",
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.teal,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+                Text(
+                  _ctrl.employee!.fullName,
+                  style: const TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: -0.5,
+                  ),
+                ),
                 Text(
                   "${_ctrl.employee!.positionHeld ?? 'Staff Member'} • ${_ctrl.employee!.email}",
                   style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
@@ -505,15 +732,40 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
             ),
           ),
           const SizedBox(width: 16),
+
+
+          //this button is used to navigate to the attendance page of the employee whose details are being viewed
           FittedBox(
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                if (_ctrl.employee?.id != null) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          Attendance(targetEmployeeId: _ctrl.employee!.id),
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Employee ID not found")),
+                  );
+                }
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: primaryTeal,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 16,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
-              child: const Text("Action Menu", style: TextStyle(color: Colors.white)),
+              child: const Text(
+                "View Attendance",
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ),
         ],
@@ -538,15 +790,21 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
         children: [
           Row(
             children: [
-              Expanded(child: _inlineTextField("Company Name", _ctrl.newCompanyCtrl)),
+              Expanded(
+                child: _inlineTextField("Company Name", _ctrl.newCompanyCtrl),
+              ),
               const SizedBox(width: 12),
-              Expanded(child: _inlineTextField("Position", _ctrl.newPositionCtrl)),
+              Expanded(
+                child: _inlineTextField("Position", _ctrl.newPositionCtrl),
+              ),
             ],
           ),
           const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(child: _inlineTextField("Salary Drawn", _ctrl.newSalaryCtrl)),
+              Expanded(
+                child: _inlineTextField("Salary Drawn", _ctrl.newSalaryCtrl),
+              ),
               const SizedBox(width: 12),
               IconButton(
                 icon: const Icon(Icons.check_circle, color: Colors.green),
@@ -571,25 +829,59 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
       margin: const EdgeInsets.only(top: 10),
-      decoration: BoxDecoration(color: bgGrey, borderRadius: BorderRadius.circular(8)),
+      decoration: BoxDecoration(
+        color: bgGrey,
+        borderRadius: BorderRadius.circular(8),
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _summaryItem("Total Earnings", _ctrl.totalEarnings, Colors.teal),
-          Text("-", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w200, color: Colors.grey.shade400)),
+          Text(
+            "-",
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w200,
+              color: Colors.grey.shade400,
+            ),
+          ),
           _summaryItem("Total Deductions", _ctrl.totalDeductions, Colors.red),
-          Text("=", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w200, color: Colors.grey.shade400)),
-          _summaryItem("NET SALARY", _ctrl.netSalary, Colors.teal, isBold: true),
+          Text(
+            "=",
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w200,
+              color: Colors.grey.shade400,
+            ),
+          ),
+          _summaryItem(
+            "NET SALARY",
+            _ctrl.netSalary,
+            Colors.teal,
+            isBold: true,
+          ),
         ],
       ),
     );
   }
 
-  Widget _summaryItem(String label, double value, Color color, {bool isBold = false}) {
+  Widget _summaryItem(
+    String label,
+    double value,
+    Color color, {
+    bool isBold = false,
+  }) {
     return Column(
       children: [
-        Text(label.toUpperCase(),
-            style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.grey.shade500, letterSpacing: 1.1)),
+        Text(
+          label.toUpperCase(),
+          style: TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.w800,
+            color: Colors.grey.shade500,
+            letterSpacing: 1.1,
+          ),
+        ),
         const SizedBox(height: 8),
         Text(
           "₹ ${value.toStringAsFixed(0)}",
@@ -624,19 +916,23 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(label,
-                      style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.grey.shade500,
-                          letterSpacing: 0.5)),
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.grey.shade500,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
                   const SizedBox(height: 4),
                   Text(
                     _ctrl.formatDate(date),
                     style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: date == null ? Colors.grey : primaryTeal),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: date == null ? Colors.grey : primaryTeal,
+                    ),
                   ),
                 ],
               ),
@@ -669,13 +965,24 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
   Widget _subHeader(String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 24),
-      child: Text(text,
-          style: const TextStyle(
-              fontSize: 12, fontWeight: FontWeight.w800, color: Colors.grey, letterSpacing: 1.5)),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w800,
+          color: Colors.grey,
+          letterSpacing: 1.5,
+        ),
+      ),
     );
   }
 
-  Widget _moneyField(String label, TextEditingController ctrl, bool isEditing, {bool isDeduction = false}) {
+  Widget _moneyField(
+    String label,
+    TextEditingController ctrl,
+    bool isEditing, {
+    bool isDeduction = false,
+  }) {
     final val = ctrl.text.isEmpty ? "0" : ctrl.text;
     return Container(
       margin: const EdgeInsets.only(bottom: 18),
@@ -684,9 +991,15 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Flexible(
-            child: Text(label,
-                style: TextStyle(fontSize: 14, color: Colors.grey.shade600, fontWeight: FontWeight.w500),
-                overflow: TextOverflow.ellipsis),
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey.shade600,
+                fontWeight: FontWeight.w500,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
           const SizedBox(width: 16),
           isEditing
@@ -695,38 +1008,63 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
                   child: TextField(
                     controller: ctrl,
                     textAlign: TextAlign.right,
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
                     style: const TextStyle(fontSize: 14),
                     decoration: InputDecoration(
                       prefixText: "₹ ",
                       isDense: true,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                      contentPadding: const EdgeInsets.symmetric(
+                        vertical: 8,
+                        horizontal: 8,
+                      ),
                       enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: primaryTeal.withOpacity(0.5))),
-                      focusedBorder:
-                          UnderlineInputBorder(borderSide: BorderSide(color: primaryTeal, width: 2)),
+                        borderSide: BorderSide(
+                          color: primaryTeal.withOpacity(0.5),
+                        ),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: primaryTeal, width: 2),
+                      ),
                     ),
                   ),
                 )
-              : Text("₹ $val",
+              : Text(
+                  "₹ $val",
                   style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                      color: isDeduction ? Colors.red.shade900 : Colors.teal.shade900)),
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: isDeduction
+                        ? Colors.red.shade900
+                        : Colors.teal.shade900,
+                  ),
+                ),
         ],
       ),
     );
   }
 
-  Widget _infoField(String label, TextEditingController ctrl, bool isEditing, {bool isFullWidth = false}) {
+  Widget _infoField(
+    String label,
+    TextEditingController ctrl,
+    bool isEditing, {
+    bool isFullWidth = false,
+  }) {
     return SizedBox(
       width: isFullWidth ? double.infinity : 180,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label.toUpperCase(),
-              style: TextStyle(
-                  fontSize: 10, fontWeight: FontWeight.w800, color: Colors.grey.shade500, letterSpacing: 1.1)),
+          Text(
+            label.toUpperCase(),
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w800,
+              color: Colors.grey.shade500,
+              letterSpacing: 1.1,
+            ),
+          ),
           const SizedBox(height: 8),
           isEditing
               ? TextField(
@@ -734,11 +1072,18 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
                   decoration: InputDecoration(
                     isDense: true,
                     contentPadding: const EdgeInsets.symmetric(vertical: 8),
-                    border: UnderlineInputBorder(borderSide: BorderSide(color: primaryTeal)),
+                    border: UnderlineInputBorder(
+                      borderSide: BorderSide(color: primaryTeal),
+                    ),
                   ),
                 )
-              : Text(ctrl.text.isEmpty ? "—" : ctrl.text,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+              : Text(
+                  ctrl.text.isEmpty ? "—" : ctrl.text,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
         ],
       ),
     );
@@ -759,16 +1104,23 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label.toUpperCase(),
-              style: TextStyle(
-                  fontSize: 10, fontWeight: FontWeight.w800, color: Colors.grey.shade500, letterSpacing: 1.1)),
+          Text(
+            label.toUpperCase(),
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w800,
+              color: Colors.grey.shade500,
+              letterSpacing: 1.1,
+            ),
+          ),
           const SizedBox(height: 8),
           isEditing
               ? GestureDetector(
                   onTap: () async {
                     DateTime initial = DateTime.now();
                     try {
-                      if (ctrl.text.isNotEmpty) initial = DateTime.parse(ctrl.text);
+                      if (ctrl.text.isNotEmpty)
+                        initial = DateTime.parse(ctrl.text);
                     } catch (_) {}
                     final picked = await showDatePicker(
                       context: context,
@@ -790,13 +1142,20 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
                         suffixIcon: const Icon(Icons.calendar_today, size: 16),
                         isDense: true,
                         contentPadding: const EdgeInsets.symmetric(vertical: 8),
-                        border: UnderlineInputBorder(borderSide: BorderSide(color: primaryTeal)),
+                        border: UnderlineInputBorder(
+                          borderSide: BorderSide(color: primaryTeal),
+                        ),
                       ),
                     ),
                   ),
                 )
-              : Text(ctrl.text.isEmpty ? "—" : formatted,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+              : Text(
+                  ctrl.text.isEmpty ? "—" : formatted,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
         ],
       ),
     );
@@ -815,11 +1174,18 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
     );
   }
 
-  Widget _buildDetailTile(String? primary, String? secondary, String? tertiary) {
+  Widget _buildDetailTile(
+    String? primary,
+    String? secondary,
+    String? tertiary,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: bgGrey, borderRadius: BorderRadius.circular(12)),
+      decoration: BoxDecoration(
+        color: bgGrey,
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -827,14 +1193,25 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(primary ?? "Unknown", style: const TextStyle(fontWeight: FontWeight.bold)),
-                Text(secondary ?? "Not specified",
-                    style: TextStyle(color: Colors.grey.shade600, fontSize: 13)),
+                Text(
+                  primary ?? "Unknown",
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  secondary ?? "Not specified",
+                  style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                ),
               ],
             ),
           ),
           const SizedBox(width: 8),
-          Text(tertiary ?? "", style: const TextStyle(fontWeight: FontWeight.w600, color: Colors.teal)),
+          Text(
+            tertiary ?? "",
+            style: const TextStyle(
+              fontWeight: FontWeight.w600,
+              color: Colors.teal,
+            ),
+          ),
         ],
       ),
     );

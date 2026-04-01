@@ -1,4 +1,5 @@
 class SingleEmployeeModel {
+  final int? id;
   final String fullName;
   final String? email;
   final String? phone;
@@ -14,6 +15,7 @@ class SingleEmployeeModel {
   final String? permanentAddress;
 
   SingleEmployeeModel({
+    this.id,
     required this.fullName,
     this.email,
     this.phone,
@@ -31,6 +33,7 @@ class SingleEmployeeModel {
 
   factory SingleEmployeeModel.fromJson(Map<String, dynamic> json) {
     return SingleEmployeeModel(
+      id: json['id'],
       fullName: json['full_name'] ?? '',
       email: json['contact_email'] ?? json['email'],
       phone: json['contact_phone'] ?? json['phone'],

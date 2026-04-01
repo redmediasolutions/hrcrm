@@ -44,7 +44,7 @@ final GoRouter appRouter = GoRouter(
       },
       routes: [
         // Redirect root → home
-        GoRoute(path: '/', redirect: (_, __) => '/home'),
+        GoRoute(path: '/', redirect: (_, _) => '/home'),
 
         // 🏠 Dashboard
         GoRoute(

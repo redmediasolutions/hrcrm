@@ -191,7 +191,7 @@ Widget build(BuildContext context) {
           });
         },
       );
-    }).toList(),
+    }),
   ],
 ),
 
@@ -378,7 +378,7 @@ Widget build(BuildContext context) {
                   ],
                 ),
               );
-            }).toList(),
+            }),
           ],
         ),
       ),

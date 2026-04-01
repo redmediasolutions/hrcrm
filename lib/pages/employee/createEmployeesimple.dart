@@ -182,7 +182,7 @@ class _CreateEmployeeSimplePageState extends State<CreateEmployeeSimplePage> {
           isDeptLoading
               ? const LinearProgressIndicator()
               : DropdownButtonFormField<int>(
-                  value: selectedDepartmentId,
+                  initialValue: selectedDepartmentId,
                   items: departments.map((dept) {
                     return DropdownMenuItem<int>(
                       value: dept.id,
