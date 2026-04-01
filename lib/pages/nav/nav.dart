@@ -9,7 +9,7 @@ import 'package:red_hrcrm/pages/attendance/attendance.dart';
 import 'package:red_hrcrm/pages/employee/createEmployeesimple.dart';
 import 'package:red_hrcrm/pages/employee/employeedetails/employee_detail_screen.dart';
 import 'package:red_hrcrm/pages/nav/shell.dart';
-import 'package:red_hrcrm/pages/payroll/payroll.dart';
+import 'package:red_hrcrm/pages/payroll/payrolldetails.dart';
 import 'package:red_hrcrm/pages/staff/staff_dashboard.dart';
 import 'package:red_hrcrm/pages/reports/reports.dart';
 
@@ -73,7 +73,7 @@ final GoRouter appRouter = GoRouter(
         // 💰 Payroll
         GoRoute(
           path: '/payroll',
-          builder: (context, state) => const Payroll(),
+          builder: (context, state) => const PayrollDetails(),
         ),
         GoRoute(
           path: '/payroll/create',
