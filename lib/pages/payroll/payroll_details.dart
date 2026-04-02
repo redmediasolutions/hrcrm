@@ -205,18 +205,6 @@ class _PayrollDetailsState extends State<PayrollDetails> {
                                 icon: const Icon(Icons.add, size: 18),
                                 label: const Text("Add Deduction", style: TextStyle(fontWeight: FontWeight.w700)),
                               ),
-                              const SizedBox(width: 12),
-                              OutlinedButton.icon(
-                                onPressed: () {},
-                                style: OutlinedButton.styleFrom(
-                                  foregroundColor: const Color(0xFF0C5D6B),
-                                  side: const BorderSide(color: Color(0xFF0C5D6B)),
-                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                ),
-                                icon: const Icon(Icons.upload_file, size: 18),
-                                label: const Text("Export History", style: TextStyle(fontWeight: FontWeight.w700)),
-                              ),
                             ],
                           ),
                         ],

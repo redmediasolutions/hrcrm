@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:red_hrcrm/models/employment_model.dart';
 import 'package:red_hrcrm/pages/attendance/attendance.dart';
+import 'package:go_router/go_router.dart';
 import 'employee_detail_controller.dart';
 
 class EmployeeDetailScreen extends StatefulWidget {
@@ -51,6 +52,29 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Row(
+              children: [
+                InkWell(
+                  onTap: () {
+                    if (context.canPop()) {
+                      context.pop();
+                    } else {
+                      context.go('/home');
+                    }
+                  },
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF0F0F0),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(Icons.arrow_back_ios_new, size: 16),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
             _buildHeroHeader(),
             const SizedBox(height: 32),
             Row(

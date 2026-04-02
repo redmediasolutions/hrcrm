@@ -19,7 +19,7 @@ class MyChoiceChip extends StatelessWidget {
             label: Text(method, style: TextStyle(color: isSelected ? Colors.black : Colors.white)),
             checkmarkColor: Colors.black,
             selected: isSelected,
-            selectedColor: const Color.fromARGB(255, 147, 157, 245),
+            selectedColor: const Color(0xFFB0BEC5), // blueGrey 200
             backgroundColor: const Color.fromARGB(255, 27, 24, 39),
             onSelected: (_) => onSelected(method),
           );
