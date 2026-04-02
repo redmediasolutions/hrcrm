@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:red_hrcrm/services/api_service.dart';
+import 'package:red_hrcrm/component/header.dart';
 
 class Attendance extends StatefulWidget {
   final int? targetEmployeeId; 
@@ -113,7 +114,11 @@ class _AttendanceState extends State<Attendance> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
-      appBar: _buildAppBar(),
+      appBar: const AppHeader(
+        searchHint: "Search employee...",
+        searchWidth: 400,
+        searchFillColor: Color(0xFFF5F5F5),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(25),
@@ -129,40 +134,6 @@ class _AttendanceState extends State<Attendance> {
           ),
         ),
       ),
-    );
-  }
-
-  PreferredSizeWidget _buildAppBar() {
-    return AppBar(
-      elevation: 0,
-      toolbarHeight: 80,
-      backgroundColor: Colors.white,
-      leading: const BackButton(color: Colors.black),
-      title: SizedBox(
-        width: 400,
-        child: TextFormField(
-          decoration: InputDecoration(
-            hintText: "Search employee...",
-            prefixIcon: const Icon(Icons.search),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide.none,
-            ),
-            filled: true,
-            fillColor: Colors.grey[100],
-          ),
-        ),
-      ),
-      actions: [
-        IconButton(onPressed: () {}, icon: const Icon(Icons.notifications_none_rounded, color: Colors.black)),
-        IconButton(onPressed: () {}, icon: const Icon(Icons.apps_outlined, color: Colors.black)),
-        const VerticalDivider(indent: 20, endIndent: 20, thickness: 1),
-        const CircleAvatar(
-          backgroundColor: Color(0xFF0C5D6B),
-          child: Icon(Icons.person, color: Colors.white, size: 20),
-        ),
-        const SizedBox(width: 16),
-      ],
     );
   }
 

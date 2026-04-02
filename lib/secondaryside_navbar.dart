@@ -122,6 +122,14 @@ class _SecondarysideNavbarState extends State<SecondarysideNavbar> {
         _optimisticRoute = null;
       }
     }
+    final user = FirebaseAuth.instance.currentUser;
+    final email = user?.email ?? "";
+    final displayName = user?.displayName;
+    final derivedName = email.isNotEmpty ? email.split('@').first : "User";
+    final name = (displayName != null && displayName.trim().isNotEmpty)
+        ? displayName.trim()
+        : derivedName;
+
     return Container(
       width: 10,
       padding: EdgeInsets.all(25),
@@ -193,67 +201,151 @@ Divider(
   color: Colors.white,
   
 ),
-             item(
-            context,
-            route: '/settings',
-            icon: Icons.settings,
-            label: "Settings",
-          ),
-           item(
-            context,
-            route: '/support',
-            icon: Icons.support_agent,
-            label: "Support",
-          ),
+          //    item(
+          //   context,
+          //   route: '/settings',
+          //   icon: Icons.settings,
+          //   label: "Settings",
+          // ),
+          //  item(
+          //   context,
+          //   route: '/support',
+          //   icon: Icons.support_agent,
+          //   label: "Support",
+          // ),
           SizedBox(height: 10,),
-Row(
-  children: [
-    PopupMenuButton<String>(
-      tooltip: 'Account',
-      onSelected: (value) async {
-        if (value == 'logout') {
-          await FirebaseAuth.instance.signOut();
-          if (!context.mounted) return;
-          context.go('/login');
-        }
-      },
-      itemBuilder: (context) => const [
-        PopupMenuItem(
-          value: 'logout',
-          child: Text('Logout'),
+Container(
+  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+  decoration: BoxDecoration(
+    color: const Color(0xFFF7F4F9),
+    borderRadius: BorderRadius.circular(16),
+    border: Border.all(color: const Color(0xFFE6DCE9)),
+  ),
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        "ADMIN",
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color:  Colors.blueGrey,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.8,
+            ),
+      ),
+      const SizedBox(height: 6),
+      Row(
+    children: [
+      Container(
+        width: 40,
+        height: 40,
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: LinearGradient(
+            colors: [Colors.blueGrey, Color.fromARGB(255, 37, 64, 83)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
         ),
-      ],
-      child: const CircleAvatar(
-        radius: 20,
-        backgroundImage: NetworkImage(
-          'https://www.shutterstock.com/image-vector/user-icon-human-person-symbol-260nw-1051033475.jpg',
+        child: Center(
+          child: Text(
+            name.isNotEmpty ? name[0].toUpperCase() : "U",
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
         ),
       ),
-    ),
-    const SizedBox(width: 8),
-    Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'UserName ',
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Colors.black,
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              ),
+      const SizedBox(width: 10),
+      Expanded(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              name,
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: Colors.black,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+            ),
+            // Text(
+            //   email.isNotEmpty ? email : 'Admin',
+            //   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            //         color: Colors.grey,
+            //         fontSize: 12,
+            //         fontWeight: FontWeight.w500,
+            //       ),
+           // ),
+          ],
         ),
-        Text(
-          'Admin',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.grey,
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
+      ),
+      PopupMenuButton<String>(
+        tooltip: 'Account',
+        color: Colors.transparent,
+        elevation: 0,
+        shadowColor: Colors.transparent,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        onSelected: (value) async {
+          if (value == 'logout') {
+            await FirebaseAuth.instance.signOut();
+            if (!context.mounted) return;
+            context.go('/login');
+          }
+        },
+        itemBuilder: (context) => [
+          PopupMenuItem(
+            value: 'logout',
+            child: Container(
+              width: 220,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFEAF2FF),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFFBFD7FF)),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x1A0B3D91),
+                    blurRadius: 10,
+                    offset: Offset(0, 6),
+                  ),
+                ],
               ),
+              child: Row(
+                children: const [
+                  Icon(Icons.logout, color: Colors.blueGrey),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      'Logout',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.blueGrey,
+                      ),
+                    ),
+                  ),
+                  Icon(Icons.arrow_forward_ios, size: 12, color: Color(0xFF6B8FE0)),
+                ],
+              ),
+            ),
+          ),
+        ],
+        child: Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: const Color(0xFFEAF2FF),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: const Icon(Icons.more_vert, size: 20, color: Color(0xFF1B4DB1)),
         ),
-      ],
-    )
-  ],
+      ),
+    ],
+  ),
+    ],
+  ),
 )
         ],
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:red_hrcrm/component/task_kpibox.dart';
 import 'package:red_hrcrm/component/tasktable.dart';
+import 'package:red_hrcrm/component/header.dart';
 
 class Reports extends StatefulWidget {
   const Reports({super.key});
@@ -34,50 +35,10 @@ class _ReportsState extends State<Reports> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white54,
-      appBar: AppBar(
-        elevation: 0,
-        leadingWidth: 500,
-        toolbarHeight: 80,
-        backgroundColor: Colors.white,
-        leading: Padding(
-          padding: const EdgeInsets.all(15),
-          child: TextFormField(
-            decoration: InputDecoration(
-              hintText: "Search",
-              prefixIcon: Icon(Icons.search),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide.none,
-              ),
-              filled: true,
-              fillColor: Colors.grey[200],
-            ),
-          ),
-        ),
-
-        actions: [
-          IconButton(
-            onPressed: () {
-              // Handle notifications
-            },
-            icon: Icon(Icons.notifications),
-            color: Colors.black,
-          ),
-          SizedBox(width: 10),
-          IconButton(
-            onPressed: () {
-              // Handle notifications
-            },
-            icon: Icon(Icons.apps_outlined),
-            color: Colors.black,
-          ),
-          SizedBox(width: 16),
-          Divider(color: Colors.grey),
-          CircleAvatar(
-            backgroundImage: NetworkImage('https://via.placeholder.com/150'),
-          ),
-          SizedBox(width: 16),
-        ],
+      appBar: const AppHeader(
+        searchHint: "Search",
+        searchWidth: 420,
+        searchFillColor: Color(0xFFEFEFEF),
       ),
       body: SingleChildScrollView(
         child: Padding(

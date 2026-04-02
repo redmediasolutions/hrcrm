@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../../models/payroll_model.dart';
 import '../../services/api_service.dart';
 import 'payroll.dart'; // StatInfoCard, LoanHistoryTable, LoanHistoryItem
+import 'package:red_hrcrm/component/header.dart';
 
 // =============================================================================
 // PAYROLL DETAILS PAGE — lib/pages/payroll/payroll_details.dart
@@ -77,31 +78,10 @@ class _PayrollDetailsState extends State<PayrollDetails> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FA),
-      appBar: AppBar(
-        elevation: 0,
-        leadingWidth: 500,
-        toolbarHeight: 80,
-        backgroundColor: Colors.white,
-        leading: Padding(
-          padding: const EdgeInsets.all(15),
-          child: TextFormField(
-            decoration: InputDecoration(
-              hintText: "Search",
-              prefixIcon: const Icon(Icons.search),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
-              filled: true,
-              fillColor: Colors.grey[200],
-            ),
-          ),
-        ),
-        actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.notifications), color: Colors.black),
-          const SizedBox(width: 10),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.apps_outlined), color: Colors.black),
-          const SizedBox(width: 16),
-          const CircleAvatar(backgroundColor: Color(0xFF004D57), child: Icon(Icons.person, color: Colors.white, size: 20)),
-          const SizedBox(width: 16),
-        ],
+      appBar: const AppHeader(
+        searchHint: "Search",
+        searchWidth: 420,
+        searchFillColor: Color(0xFFEFEFEF),
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator(color: Color(0xFF0C5D6B)))

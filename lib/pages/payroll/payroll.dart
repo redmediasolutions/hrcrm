@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../models/payroll_model.dart';
 import '../../services/api_service.dart';
+import 'package:red_hrcrm/component/header.dart';
 
 // =============================================================================
 // MAIN PAYROLL PAGE — lib/pages/payroll/payroll.dart
@@ -63,39 +64,10 @@ class _PayrollState extends State<Payroll> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7F9),
-      appBar: AppBar(
-        elevation: 0,
-        leadingWidth: 400,
-        toolbarHeight: 80,
-        backgroundColor: Colors.white,
-        leading: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-          child: TextFormField(
-            decoration: InputDecoration(
-              hintText: "Search employee financial records...",
-              prefixIcon: const Icon(Icons.search, color: Colors.black45),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
-              ),
-              filled: true,
-              fillColor: const Color(0xFFF1F3F6),
-            ),
-          ),
-        ),
-        actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.notifications_none_rounded), color: Colors.black),
-          const SizedBox(width: 10),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.apps_outlined), color: Colors.black),
-          const SizedBox(width: 16),
-          const VerticalDivider(indent: 25, endIndent: 25, thickness: 1),
-          const SizedBox(width: 16),
-          const CircleAvatar(
-            backgroundColor: Color(0xFF004D57),
-            child: Icon(Icons.person, color: Colors.white, size: 20),
-          ),
-          const SizedBox(width: 25),
-        ],
+      appBar: const AppHeader(
+        searchHint: "Search employee financial records...",
+        searchWidth: 420,
+        searchFillColor: Color(0xFFF1F3F6),
       ),
       body: RefreshIndicator(
         onRefresh: _loadDashboard,
