@@ -6,6 +6,7 @@ import 'package:red_hrcrm/models/contactmodel.dart';
 import 'package:red_hrcrm/models/deparment.dart';
 import 'package:red_hrcrm/models/employeepaginatedmodel.dart';
 import 'package:red_hrcrm/models/office_use_model.dart';
+import 'package:red_hrcrm/models/payroll_model.dart';
 import 'package:red_hrcrm/models/personalmodel.dart';
 import 'package:red_hrcrm/models/employment_model.dart';
 import 'package:red_hrcrm/models/family_model.dart';
@@ -557,5 +558,94 @@ static Future<void> saveOfficeUse(OfficeUseModel model) async {
   if (res.statusCode != 200) {
     throw Exception("Save failed: ${res.body}");
   }
+}
+
+// ================= Payroll  =================
+
+static Future<PayrollModel> getPayroll(int employeeId) async {
+  final token = await _getToken();
+
+  final res = await http.get(
+    Uri.parse("$baseUrl/api/payroll/$employeeId"),
+    headers: {"Authorization": "Bearer $token"},
+  );
+
+  if (res.statusCode != 200) {
+    throw Exception("Failed to fetch payroll");
+  }
+
+  final data = jsonDecode(res.body);
+  return PayrollModel.fromJson(data);
+}
+
+static Future<void> addLoan({
+  required int employeeId,
+  required double amount,
+  required String date,
+  String? reason,
+}) async {
+  final token = await _getToken();
+
+  final res = await http.post(
+    Uri.parse("$baseUrl/api/loans"),
+    headers: {
+      "Authorization": "Bearer $token",
+      "Content-Type": "application/json",
+    },
+    body: jsonEncode({
+      "employee_id": employeeId,
+      "amount": amount,
+      "date": date,
+      "reason": reason,
+    }),
+  );
+
+  if (res.statusCode != 200) {
+    throw Exception("Failed to add loan");
+  }
+}
+
+static Future<void> addDeduction({
+  required int employeeId,
+  required double amount,
+  required String date,
+  String? source,
+  String? notes,
+}) async {
+  final token = await _getToken();
+
+  final res = await http.post(
+    Uri.parse("$baseUrl/api/deductions"),
+    headers: {
+      "Authorization": "Bearer $token",
+      "Content-Type": "application/json",
+    },
+    body: jsonEncode({
+      "employee_id": employeeId,
+      "amount": amount,
+      "date": date,
+      "source": source,
+      "notes": notes,
+    }),
+  );
+
+  if (res.statusCode != 200) {
+    throw Exception("Failed to add deduction");
+  }
+}
+
+static Future<List<Map<String, dynamic>>> getPayrollDashboard() async {
+  final token = await _getToken();
+
+  final res = await http.get(
+    Uri.parse("$baseUrl/api/payroll"),
+    headers: {"Authorization": "Bearer $token"},
+  );
+
+  if (res.statusCode != 200) {
+    throw Exception("Failed to fetch payroll dashboard");
+  }
+
+  return List<Map<String, dynamic>>.from(jsonDecode(res.body));
 }
 }

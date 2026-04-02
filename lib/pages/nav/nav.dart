@@ -9,9 +9,9 @@ import 'package:red_hrcrm/pages/attendance/attendance.dart';
 import 'package:red_hrcrm/pages/employee/createEmployeesimple.dart';
 import 'package:red_hrcrm/pages/employee/employeedetails/employee_detail_screen.dart';
 import 'package:red_hrcrm/pages/nav/shell.dart';
+import 'package:red_hrcrm/pages/payroll/add_loan.dart';
 import 'package:red_hrcrm/pages/payroll/payroll.dart';
-import 'package:red_hrcrm/pages/payroll/payrolldetails.dart';
-import 'package:red_hrcrm/pages/payroll/addloan/addloan.dart';
+import 'package:red_hrcrm/pages/payroll/payroll_details.dart';
 import 'package:red_hrcrm/pages/staff/staff_dashboard.dart';
 import 'package:red_hrcrm/pages/reports/reports.dart';
 
@@ -34,10 +34,7 @@ final GoRouter appRouter = GoRouter(
 
   routes: [
     // 🔓 AUTH
-    GoRoute(
-      path: '/login',
-      builder: (context, state) => const LoginPage(),
-    ),
+    GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
 
     // 🔒 APP (SHELL)
     ShellRoute(
@@ -49,10 +46,7 @@ final GoRouter appRouter = GoRouter(
         GoRoute(path: '/', redirect: (_, _) => '/home'),
 
         // 🏠 Dashboard
-        GoRoute(
-          path: '/home',
-          builder: (context, state) => Homepage(),
-        ),
+        GoRoute(path: '/home', builder: (context, state) => Homepage()),
 
         // 👥 Employees
         GoRoute(
@@ -73,13 +67,12 @@ final GoRouter appRouter = GoRouter(
         ),
 
         // 💰 Payroll
+        GoRoute(path: '/payroll', builder: (context, state) => const Payroll()),
         GoRoute(
-          path: '/payroll',
-          builder: (context, state) => const Payroll(),
-        ),
-        GoRoute(
-          path: '/payroll/details',
-          builder: (context, state) => const PayrollDetails(),
+          path: '/payroll/details/:employeeId',
+          builder: (ctx, state) => PayrollDetails(
+            employeeId: int.parse(state.pathParameters['employeeId']!),
+          ),
         ),
         GoRoute(
           path: '/payroll/add-loan',
@@ -102,10 +95,7 @@ final GoRouter appRouter = GoRouter(
         ),
 
         // ✅ Tasks
-        GoRoute(
-          path: '/reports',
-          builder: (context, state) => const Reports(),
-        ),
+        GoRoute(path: '/reports', builder: (context, state) => const Reports()),
       ],
     ),
   ],
