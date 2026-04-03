@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:red_hrcrm/services/api_service.dart';
+import 'package:red_hrcrm/component/header.dart';
 
 class Reports extends StatefulWidget {
   const Reports({super.key});
@@ -52,6 +53,9 @@ class _ReportsState extends State<Reports> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgGrey,
+      appBar: const AppHeader(
+        searchHint: "Search reports...",
+      ),
       body: Row(
         children: [
           // MAIN DASHBOARD
