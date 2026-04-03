@@ -11,6 +11,7 @@ import 'package:red_hrcrm/models/personalmodel.dart';
 import 'package:red_hrcrm/models/employment_model.dart';
 import 'package:red_hrcrm/models/family_model.dart';
 import 'package:red_hrcrm/models/remuneration_model.dart';
+import 'package:red_hrcrm/models/reports_model.dart';
 
 class ApiService {
   static const String baseUrl = "https://api.hr.rd-crm.in";
@@ -648,4 +649,43 @@ static Future<List<Map<String, dynamic>>> getPayrollDashboard() async {
 
   return List<Map<String, dynamic>>.from(jsonDecode(res.body));
 }
+
+
+  /// Fetch all reports for the tenant (admin/manager view)
+  static Future<List<DailyReportModel>> getDailyReports() async {
+    final token = await _getToken();
+ 
+    final res = await http.get(
+      Uri.parse("$baseUrl/api/daily-reports"),
+      headers: {"Authorization": "Bearer $token"},
+    );
+ 
+    if (res.statusCode != 200) {
+      throw Exception("Failed to fetch reports: ${res.body}");
+    }
+ 
+    final List data = jsonDecode(res.body);
+    return data
+        .map((e) => DailyReportModel.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+ 
+  /// Update report status (e.g. "reviewed", "submitted")
+  static Future<void> updateReportStatus(int reportId, String status) async {
+    final token = await _getToken();
+ 
+    final res = await http.patch(
+      Uri.parse("$baseUrl/api/daily-reports/$reportId/status"),
+      headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode({"status": status}),
+    );
+ 
+    if (res.statusCode != 200) {
+      throw Exception("Failed to update status: ${res.body}");
+    }
+  }
 }
+
