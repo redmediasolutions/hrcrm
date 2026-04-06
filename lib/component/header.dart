@@ -60,15 +60,6 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
       leadingWidth: showBackButton ? null : searchWidth + searchPadding.horizontal,
       title: showBackButton ? searchField : null,
       actions: [
-        IconButton(
-          onPressed: onNotificationsPressed ?? () {},
-          icon: const Icon(Icons.notifications_none_rounded, color: Colors.black),
-        ),
-        IconButton(
-          onPressed: onAppsPressed ?? () {},
-          icon: const Icon(Icons.apps_outlined, color: Colors.black),
-        ),
-        const VerticalDivider(indent: 20, endIndent: 20, thickness: 1),
         avatar ??
             const CircleAvatar(
               backgroundColor: Color(0xFF0C5D6B),

@@ -98,6 +98,29 @@ class _EmployeeTableState extends State<EmployeeTable> {
       fetchEmployees();
     }
   }
+
+  ChoiceChip _buildDeptChip({
+    required String label,
+    required bool isSelected,
+    required VoidCallback onSelected,
+  }) {
+    return ChoiceChip(
+      label: Text(label),
+      selected: isSelected,
+      onSelected: (_) => onSelected(),
+      labelStyle: TextStyle(
+        color: isSelected ? Colors.black87 : Colors.grey.shade700,
+        fontWeight: FontWeight.w600,
+      ),
+      checkmarkColor: Colors.black54,
+      selectedColor: Colors.grey.shade300,
+      backgroundColor: Colors.grey.shade200,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+        side: BorderSide(color: Colors.grey.shade300),
+      ),
+    );
+  }
 @override
 Widget build(BuildContext context) {
   if (loading) {
@@ -170,10 +193,10 @@ Widget build(BuildContext context) {
   runSpacing: 10,
   children: [
     /// ALL
-    ChoiceChip(
-      label: const Text("All"),
-      selected: selectedDepartmentId == null,
-      onSelected: (_) {
+    _buildDeptChip(
+      label: "All",
+      isSelected: selectedDepartmentId == null,
+      onSelected: () {
         setState(() {
           selectedDepartmentId = null;
         });
@@ -182,10 +205,10 @@ Widget build(BuildContext context) {
 
     /// DYNAMIC DEPARTMENTS
     ...departments.map((dept) {
-      return ChoiceChip(
-        label: Text(dept.name),
-        selected: selectedDepartmentId == dept.id,
-        onSelected: (_) {
+      return _buildDeptChip(
+        label: dept.name,
+        isSelected: selectedDepartmentId == dept.id,
+        onSelected: () {
           setState(() {
             selectedDepartmentId = dept.id;
           });
@@ -195,15 +218,6 @@ Widget build(BuildContext context) {
   ],
 ),
 
-                  const Spacer(),
-
-                  const Row(
-                    children: [
-                      Icon(Icons.filter_alt),
-                      SizedBox(width: 5),
-                      Text('Advance Filters'),
-                    ],
-                  ),
                 ],
               ),
             ),
@@ -214,11 +228,11 @@ Widget build(BuildContext context) {
           const SizedBox(
             width: 300,
             height: 150,
-            child: KpiBox(
-              title: 'Total Workforce',
-              value: '1284',
-              deltaText: '+12 this month',
-            ),
+            // child: KpiBox(
+            //   title: 'Total Workforce',
+            //   value: '1284',
+            //   deltaText: '+12 this month',
+            // ),
           ),
         ],
       ),

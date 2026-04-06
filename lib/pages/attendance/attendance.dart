@@ -150,11 +150,11 @@ class _AttendanceState extends State<Attendance> {
           ],
         ),
         Row(
-          children: [
-            _buildActionButton(label: "Export", icon: Icons.file_download_outlined, isPrimary: false),
-            const SizedBox(width: 15),
-            _buildActionButton(label: "Manual Entry", icon: Icons.add, isPrimary: true),
-          ],
+          // children: [
+          //   _buildActionButton(label: "Export", icon: Icons.file_download_outlined, isPrimary: false),
+          //   const SizedBox(width: 15),
+          //   _buildActionButton(label: "Manual Entry", icon: Icons.add, isPrimary: true),
+          // ],
         ),
       ],
     );
