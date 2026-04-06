@@ -11,7 +11,6 @@ class CreateEmployeeSimplePage extends StatefulWidget {
 }
 
 class _CreateEmployeeSimplePageState extends State<CreateEmployeeSimplePage> {
-  // Controllers (only required ones used)
   final name = TextEditingController();
   final email = TextEditingController();
   final phone = TextEditingController();
