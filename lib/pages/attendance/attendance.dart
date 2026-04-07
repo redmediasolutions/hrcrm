@@ -176,37 +176,34 @@ class _AttendanceState extends State<Attendance> {
   }
 
   Widget _buildActivityTable() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text("Real-time Activity", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 15),
+        Container(
+          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
+          child: Column(
             children: [
-              const Text("Real-time Activity", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              OutlinedButton.icon(onPressed: () {}, icon: const Icon(Icons.filter_list), label: const Text("Filter")),
+              const _TableHeader(),
+              _isLoading
+                  ? const Padding(padding: EdgeInsets.all(50), child: CircularProgressIndicator(color: Color(0xFF0C5D6B)))
+                  : ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: attendanceList.length,
+                      itemBuilder: (context, index) {
+                        final emp = attendanceList[index];
+                        return InkWell(
+                          onTap: () => _showDetailsManual(context, emp),
+                          child: _AttendanceRowContent(employee: emp),
+                        );
+                      },
+                    ),
             ],
           ),
-          const SizedBox(height: 20),
-          const _TableHeader(),
-          const Divider(height: 1),
-          _isLoading
-              ? const Padding(padding: EdgeInsets.all(50), child: CircularProgressIndicator(color: Color(0xFF0C5D6B)))
-              : ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: attendanceList.length,
-                  itemBuilder: (context, index) {
-                    final emp = attendanceList[index];
-                    return InkWell(
-                      onTap: () => _showDetailsManual(context, emp),
-                      child: _AttendanceRowContent(employee: emp),
-                    );
-                  },
-                ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -250,9 +247,16 @@ class _AttendanceRowContent extends StatelessWidget {
           Expanded(child: Text(_formatTime(employee['check_out']))),
           Expanded(child: Text(employee['total_hours'] ?? "0.0h")),
           Expanded(
-            child: CircleAvatar(
-              radius: 18,
-              backgroundImage: NetworkImage(employee['image'] ?? employee['avatar'] ?? 'https://via.placeholder.com/150'),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Container(
+                width: 36,
+                height: 36,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFE6D9FF),
+                  shape: BoxShape.circle,
+                ),
+              ),
             ),
           ),
         ],
@@ -297,17 +301,40 @@ class _TableHeader extends StatelessWidget {
   const _TableHeader();
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-      child: Row(
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+      decoration: const BoxDecoration(
+        color: Color(0xFFF9FAFB),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        border: Border(bottom: BorderSide(color: Color(0xFFEEEEEE))),
+      ),
+      child: const Row(
         children: [
-          Expanded(flex: 2, child: Text("Employee", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey))),
-          Expanded(child: Text("Check-In", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey))),
-          Expanded(child: Text("Check-Out", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey))),
-          Expanded(child: Text("Hours", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey))),
-          Expanded(child: Text("Selfie", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey))),
+          Expanded(flex: 2, child: _TH("EMPLOYEE")),
+          Expanded(child: _TH("CHECK-IN")),
+          Expanded(child: _TH("CHECK-OUT")),
+          Expanded(child: _TH("HOURS")),
+          Expanded(child: _TH("SELFIE")),
         ],
       ),
     );
   }
+}
+
+class _TH extends StatelessWidget {
+  final String text;
+  final TextAlign align;
+  const _TH(this.text, {this.align = TextAlign.left});
+
+  @override
+  Widget build(BuildContext context) => Text(
+        text,
+        textAlign: align,
+        style: const TextStyle(
+          color: Colors.black45,
+          fontSize: 10,
+          fontWeight: FontWeight.w800,
+          letterSpacing: 0.8,
+        ),
+      );
 }

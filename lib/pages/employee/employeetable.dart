@@ -22,6 +22,13 @@ class _EmployeeTableState extends State<EmployeeTable> {
   List<dynamic> departments = [];
   int? selectedDepartmentId; // 🔥 main filter
 
+  int? _asInt(dynamic v) {
+    if (v == null) return null;
+    if (v is int) return v;
+    if (v is double) return v.toInt();
+    return int.tryParse(v.toString());
+  }
+
   @override
   void initState() {
     super.initState();
@@ -143,7 +150,7 @@ Widget build(BuildContext context) {
 
   final matchesDepartment =
       selectedDepartmentId == null ||
-      e.department == selectedDepartmentId;
+      _asInt(e.department) == selectedDepartmentId;
 
   return matchesSearch && matchesDepartment;
 }).toList();
@@ -177,13 +184,12 @@ Widget build(BuildContext context) {
       /// 🔥 FILTER + KPI ROW
       Row(
         children: [
-          Expanded(
-            child: Container(
-              height: 150,
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 children: [
@@ -207,10 +213,10 @@ Widget build(BuildContext context) {
     ...departments.map((dept) {
       return _buildDeptChip(
         label: dept.name,
-        isSelected: selectedDepartmentId == dept.id,
+        isSelected: selectedDepartmentId == _asInt(dept.id),
         onSelected: () {
           setState(() {
-            selectedDepartmentId = dept.id;
+            selectedDepartmentId = _asInt(dept.id);
           });
         },
       );
@@ -239,27 +245,6 @@ Widget build(BuildContext context) {
 
       const SizedBox(height: 20),
 
-      /// 🔍 SEARCH BAR
-      TextFormField(
-        onChanged: (value) {
-          setState(() {
-            searchQuery = value;
-          });
-        },
-        decoration: InputDecoration(
-          hintText: "Search employees...",
-          prefixIcon: const Icon(Icons.search),
-          filled: true,
-          fillColor: Colors.grey[200],
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide.none,
-          ),
-        ),
-      ),
-
-      const SizedBox(height: 20),
-
       /// 🔥 TOP BAR
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -273,7 +258,7 @@ Widget build(BuildContext context) {
             icon: const Icon(Icons.add, size: 18),
             label: const Text("ADD EMPLOYEE"),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.black,
+              backgroundColor: Color(0xFF0C5D6B),
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(
                 horizontal: 20,

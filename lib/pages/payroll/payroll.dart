@@ -344,20 +344,44 @@ class _LoanTable extends StatelessWidget {
                           ),
                         ),
                       ),
-                      // Action
-                      Expanded(
-                        flex: 1,
-                        child: Text(
-                          isActive ? 'View Details' : 'Archive',
-                          textAlign: TextAlign.right,
-                          style: TextStyle(
-                            color: isActive ? const Color(0xFF0C5D6B) : Colors.black26,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            decoration: isActive ? TextDecoration.underline : null,
+                        // Action
+                        Expanded(
+                          flex: 1,
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: isActive
+                                ? Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF0C5D6B),
+                                      borderRadius: BorderRadius.circular(999),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: const [
+                                        Icon(Icons.visibility, size: 16, color: Colors.white),
+                                        SizedBox(width: 8),
+                                        Text(
+                                          'View',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : Text(
+                                    'Archive',
+                                    style: TextStyle(
+                                      color: Colors.black26,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
                           ),
                         ),
-                      ),
                     ],
                   ),
                 ),

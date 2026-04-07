@@ -17,7 +17,7 @@ class _HomepageState extends State<Homepage> {
     return Scaffold(
       backgroundColor: Colors.white54,
       appBar: const AppHeader(
-        searchHint: "Search",
+        searchHint: "Search Employee..",
         searchWidth: 420,
         searchFillColor: Color(0xFFEFEFEF),
       ),

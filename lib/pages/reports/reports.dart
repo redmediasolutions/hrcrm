@@ -112,8 +112,16 @@ class _ReportsState extends State<Reports> {
       appBar: const AppHeader(
         searchHint: "Search reports...",
       ),
-      body: Row(
+      body: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(40, 40, 40, 0),
+            child: _buildHeader(),
+          ),
+          const SizedBox(height: 32),
+          Expanded(
+            child: Row(
+              children: [
           // ── Main panel ──────────────────────────────────────────────────
           Expanded(
             flex: 4,
@@ -121,13 +129,11 @@ class _ReportsState extends State<Reports> {
               onRefresh: _fetchReports,
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.all(40),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildHeader(),
-                    const SizedBox(height: 32),
-                    _buildKPIGrid(),
+                  padding: const EdgeInsets.fromLTRB(40, 0, 40, 40),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildKPIGrid(),
                     const SizedBox(height: 32),
                     _buildFilterBar(),
                     const SizedBox(height: 20),
@@ -160,6 +166,9 @@ class _ReportsState extends State<Reports> {
                     child: _buildInspectionPanel(_selected!),
                   )
                 : const SizedBox.shrink(),
+          ),
+              ],
+            ),
           ),
         ],
       ),
