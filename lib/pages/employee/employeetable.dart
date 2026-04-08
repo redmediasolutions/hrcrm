@@ -4,7 +4,6 @@ import 'package:red_hrcrm/models/employeemodel.dart';
 
 import 'package:red_hrcrm/pages/employee/employee_tableheader.dart';
 import '../../services/api_service.dart';
-import 'package:red_hrcrm/component/kpiboxes.dart';
 
 class EmployeeTable extends StatefulWidget {
   const EmployeeTable({super.key});

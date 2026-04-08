@@ -670,6 +670,46 @@ static Future<List<Map<String, dynamic>>> getPayrollDashboard() async {
         .toList();
   }
  
+
+ // ================= ATTENDANCE =================
+
+static Future<dynamic> markAttendance({
+  required double lat,
+  required double lng,
+  required String imagePath,
+}) async {
+  final token = await _getToken();
+
+  var request = http.MultipartRequest(
+    'POST',
+    Uri.parse("$baseUrl/api/Attendance/mark"),
+  );
+
+  // 🔐 Auth
+  request.headers['Authorization'] = "Bearer $token";
+
+  // ✅ IMPORTANT FIX (this was missing in your project)
+  request.fields['latitude'] = lat.toString();
+  request.fields['longitude'] = lng.toString();
+
+  // 📸 Image
+  request.files.add(
+    await http.MultipartFile.fromPath('image', imagePath),
+  );
+
+  final response = await request.send();
+
+  final resBody = await response.stream.bytesToString();
+
+  print("📡 ATTENDANCE STATUS: ${response.statusCode}");
+  print("📦 ATTENDANCE RESPONSE: $resBody");
+
+  if (response.statusCode != 200) {
+    throw Exception("Failed to mark attendance");
+  }
+
+  return jsonDecode(resBody);
+}
   /// Update report status (e.g. "reviewed", "submitted")
   static Future<void> updateReportStatus(int reportId, String status) async {
     final token = await _getToken();
