@@ -166,7 +166,7 @@ class _PortfolioOverview extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 15, offset: const Offset(0, 5))],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 15, offset: const Offset(0, 5))],
       ),
       child: IntrinsicHeight(
         child: Row(
@@ -481,7 +481,7 @@ class StatInfoCard extends StatelessWidget {
         ),
         Container(
           width: 40, height: 40,
-          decoration: BoxDecoration(color: accentColor.withOpacity(0.12), borderRadius: BorderRadius.circular(12)),
+          decoration: BoxDecoration(color: accentColor.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(12)),
           child: Icon(icon, color: accentColor, size: 20),
         ),
       ],
@@ -580,7 +580,7 @@ class _LoanHistoryRow extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(color: item.statusColor.withOpacity(0.12), borderRadius: BorderRadius.circular(8)),
+              decoration: BoxDecoration(color: item.statusColor.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
               child: Text(item.status, style: TextStyle(color: item.statusColor, fontWeight: FontWeight.w700, fontSize: 10)),
             ),
           ),

@@ -84,7 +84,7 @@ class _AttendanceState extends State<Attendance> {
             borderRadius: BorderRadius.circular(28),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               )
@@ -106,7 +106,7 @@ class _AttendanceState extends State<Attendance> {
                             imageUrl,
                             fit: BoxFit.cover,
                             alignment: Alignment.center,
-                            errorBuilder: (_, __, ___) =>
+                            errorBuilder: (_, _, _) =>
                                 _avatarPlaceholder(employee['full_name']),
                           )
                         : _avatarPlaceholder(employee['full_name']),
@@ -120,10 +120,10 @@ class _AttendanceState extends State<Attendance> {
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                           colors: [
-                            Colors.black.withOpacity(0.3),
+                            Colors.black.withValues(alpha: 0.3),
                             Colors.transparent,
                             Colors.transparent,
-                            Colors.black.withOpacity(0.1),
+                            Colors.black.withValues(alpha: 0.1),
                           ],
                         ),
                       ),
@@ -137,7 +137,7 @@ class _AttendanceState extends State<Attendance> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
                       child: BackdropFilter(
-                        filter: ColorFilter.mode(Colors.black.withOpacity(0.1), BlendMode.darken),
+                        filter: ColorFilter.mode(Colors.black.withValues(alpha: 0.1), BlendMode.darken),
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                           color: isPresent ? Colors.green.shade600 : Colors.red.shade600,
@@ -164,7 +164,7 @@ class _AttendanceState extends State<Attendance> {
                       child: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withValues(alpha: 0.2),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(Icons.close, color: Colors.white, size: 20),
@@ -280,9 +280,9 @@ String _formatCoord(dynamic val) {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
+        color: color.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: color.withOpacity(0.15)),
+        border: Border.all(color: color.withValues(alpha: 0.15)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -542,14 +542,14 @@ class _AttendanceRowContent extends StatelessWidget {
               shape: BoxShape.circle,
               color: isAbsent
                   ? Colors.red.shade50
-                  : const Color(0xFF0C5D6B).withOpacity(0.1),
+                  : const Color(0xFF0C5D6B).withValues(alpha: 0.1),
             ),
             clipBehavior: Clip.antiAlias,
             child: url != null
                 ? Image.network(
                     url,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Icon(
+                    errorBuilder: (_, _, _) => Icon(
                       Icons.person,
                       size: 20,
                       color: isAbsent
@@ -651,7 +651,7 @@ class _KPIBox extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, color: color, size: 20),

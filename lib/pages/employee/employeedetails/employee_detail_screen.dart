@@ -713,7 +713,7 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
         children: [
           CircleAvatar(
             radius: 45,
-            backgroundColor: primaryTeal.withOpacity(0.1),
+            backgroundColor: primaryTeal.withValues(alpha: 0.1),
             child: Text(
               _ctrl.employee!.fullName.isNotEmpty
                   ? _ctrl.employee!.fullName[0]
@@ -806,7 +806,7 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
       margin: const EdgeInsets.only(top: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.blue.withOpacity(0.05),
+        color: Colors.blue.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.blue.shade100),
       ),
@@ -912,7 +912,7 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
           style: TextStyle(
             fontSize: isBold ? 18 : 16,
             fontWeight: isBold ? FontWeight.w900 : FontWeight.w700,
-            color: isBold ? primaryTeal : color.withOpacity(0.9),
+            color: isBold ? primaryTeal : color.withValues(alpha: 0.9),
           ),
         ),
       ],
@@ -1045,7 +1045,7 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
                       ),
                       enabledBorder: UnderlineInputBorder(
                         borderSide: BorderSide(
-                          color: primaryTeal.withOpacity(0.5),
+                          color: primaryTeal.withValues(alpha: 0.5),
                         ),
                       ),
                       focusedBorder: UnderlineInputBorder(

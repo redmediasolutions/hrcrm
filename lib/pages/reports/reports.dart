@@ -233,7 +233,7 @@ class _ReportsState extends State<Reports> {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.02),
+              color: Colors.black.withValues(alpha: 0.02),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -354,7 +354,7 @@ class _ReportsState extends State<Reports> {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.02),
+                  color: Colors.black.withValues(alpha: 0.02),
                   blurRadius: 8,
                   offset: const Offset(0, 3),
                 ),
@@ -469,9 +469,9 @@ class _ReportsState extends State<Reports> {
             width: double.infinity,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: primaryTeal.withOpacity(0.04),
+              color: primaryTeal.withValues(alpha: 0.04),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: primaryTeal.withOpacity(0.1)),
+              border: Border.all(color: primaryTeal.withValues(alpha: 0.1)),
             ),
             child: Text(
               report.todaysTasks.isNotEmpty
@@ -491,9 +491,9 @@ class _ReportsState extends State<Reports> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.red.withOpacity(0.05),
+                    color: Colors.red.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.red.withOpacity(0.12)),
+                    border: Border.all(color: Colors.red.withValues(alpha: 0.12)),
                   ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -517,7 +517,7 @@ class _ReportsState extends State<Reports> {
               : Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: Colors.green.withOpacity(0.05),
+                    color: Colors.green.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -624,7 +624,7 @@ class _ReportsState extends State<Reports> {
   Widget _avatar(String initials, {double radius = 22}) {
     return CircleAvatar(
       radius: radius,
-      backgroundColor: primaryTeal.withOpacity(0.1),
+      backgroundColor: primaryTeal.withValues(alpha: 0.1),
       child: Text(
         initials,
         style: TextStyle(
@@ -643,17 +643,17 @@ class _ReportsState extends State<Reports> {
 
     switch (status.toLowerCase()) {
       case 'reviewed':
-        bg = Colors.green.withOpacity(0.1);
+        bg = Colors.green.withValues(alpha: 0.1);
         fg = Colors.green.shade700;
         label = 'Reviewed';
         break;
       case 'flagged':
-        bg = Colors.red.withOpacity(0.1);
+        bg = Colors.red.withValues(alpha: 0.1);
         fg = Colors.red.shade700;
         label = 'Flagged';
         break;
       default:
-        bg = accentBlue.withOpacity(0.1);
+        bg = accentBlue.withValues(alpha: 0.1);
         fg = accentBlue;
         label = 'New';
     }

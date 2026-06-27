@@ -353,7 +353,7 @@ class _AddLoanState extends State<AddLoan> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF0C5D6B),
                       foregroundColor: Colors.white,
-                      disabledBackgroundColor: const Color(0xFF0C5D6B).withOpacity(0.6),
+                      disabledBackgroundColor: const Color(0xFF0C5D6B).withValues(alpha: 0.6),
                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     ),

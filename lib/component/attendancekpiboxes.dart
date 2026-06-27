@@ -27,7 +27,7 @@ class Attendancekpiboxes extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -43,7 +43,7 @@ class Attendancekpiboxes extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: iconscolor.withOpacity(0.2), // Light background for icon
+                  color: iconscolor.withValues(alpha: 0.2), // Light background for icon
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(symbol, color: iconscolor, size: 20),
